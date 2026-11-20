@@ -41,6 +41,7 @@ honors.forEach((h,id)=>{
  furniture.atrium.push(portal(id,35+id*80,170+(id%2)*55));
 });
 furniture.music.push(["desk",423,212,76,45,"Writing desk","Browse the project shelf."],["notice",215,83,51,32,"Team photograph","Twelve young researchers in Kasserine, including Dhiya, Ranya and Amen."],["map",288,242,50,30,"Door atlas","North wall, left to right: projects, research, campus, hackathon and awards."]);
+rooms.memory6[1]="An imagined Musicana concert. Approach the piano to play a synth arrangement of Oblivion with the band, then explore the score library.";
 rooms.music[0]="Amen’s bedroom";
 rooms.music[1]="Start at the north wall: five doors open into my work, research and community. Inspect the room to find a score, a journal and a team photograph.";
 function drawPortal(item){
@@ -83,7 +84,7 @@ function exploreItem(item){
 // Follow the player's actual route so the team retraces turns around furniture.
 let teamTrail=[],teamDistance=0,teamTask=null;
 function teamRoster(){
- if(room==="field"||room==="memory3")return ["Dhiya","Ranya",...Array(9).fill("")];
+
  if(room==="memory1")return ["Teammate","Teammate"];
 
  return [];

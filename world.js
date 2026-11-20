@@ -32,9 +32,9 @@ function paint(){
  const playing = instrument && ["piano","guitar"].includes(instrument[0]);
  const drawHero=()=>{
    if(playing && hero.complete && hero.naturalWidth){
-     const [,a,b,w,h]=instrument, px=Math.round(a+w/2), py=b+h+9;
+     const px=Math.round(x),py=Math.round(y);
      const beat=Math.floor(performance.now()/200)%2;
-     block(px-8,py-3,16,3,"#a57852");block(px-6,py,3,6,"#624538");block(px+4,py,3,6,"#624538");
+
      ctx.drawImage(hero,px-11,py-26,22,25);
      if(instrument[0]==="guitar"){
        block(px-6,py-12,12,8,"#c99155");block(px+4,py-12,12,3,"#9c714d");
@@ -53,7 +53,7 @@ function paint(){
    if(item[0]==="portal")drawPortal(item);else drawFurniture(item);
  }
  if(!drawn)drawHero();
- drawTeam();drawOrientationPeople();
+ drawTeam();drawOrientationPeople();drawPerformance();
  if(room==="music"&&lightsLow)block(0,0,mapWidth,mapHeight,"#13234244");
  if(room==="music"&&plantWatered){const plant=furniture.music.find(i=>i[0]==="plant");block(plant[1]+8,plant[2],6,4,"#a6f592");}
  ctx.restore();
@@ -64,8 +64,11 @@ function paint(){
    const atGuitar=item?.[0]==="guitar";
    if(atPiano!==bachActive || atGuitar!==guitarActive){
      bachActive=atPiano;guitarActive=atGuitar;music();
+     if(atGuitar && !muted && "speechSynthesis" in window){
+       const cheer=new SpeechSynthesisUtterance("¡Olé!");cheer.lang="es-ES";window.speechSynthesis.speak(cheer);
+     }
    }
-   notifyWorld(item ? (item[0]==="piano"?"♪ G Minor Bach · Piano Tiles 2":(item[5]||item[0])+" nearby")+" · Press E to inspect" : "");
+   notifyWorld(item ? (item[0]==="piano"?(room==="memory6"?"♪ Oblivion · M83":"♪ G Minor Bach · Piano Tiles 2"):item[0]==="guitar"?"¡Olé! · Amen also plays guitar":(item[5]||item[0])+" nearby")+" · Press E to inspect" : "");
  }
  button.hidden=!started||!item;
  button.disabled=!item;
@@ -73,7 +76,7 @@ function paint(){
 }
 hero.onload=paint;
 setInterval(()=>orientationTick(.06,performance.now()),60);
-setInterval(()=>{if((bachActive||guitarActive)&&!document.hidden)paint();},180);
+setInterval(()=>{if((bachActive||guitarActive||room==="field"||room==="memory3")&&!document.hidden)paint();},180);
 function tone(freq,duration,volume,type="triangle",delay=0,destination=context?.destination){
  if(muted||document.hidden||!context||context.state!=="running")return;
  const osc=context.createOscillator(),gain=context.createGain(),t=context.currentTime+delay;
@@ -107,7 +110,7 @@ function nearby(){
  for(const item of targets){
    
    const [,a,b,w,h]=item;
-   const d=Math.hypot(Math.max(a-x,0,x-a-w),Math.max(b+h*.55-y,0,y-b-h));
+   const d=Math.hypot(Math.max(a-x,0,x-a-w),Math.max(b+(["piano","guitar"].includes(item[0])?0:h*.55)-y,0,y-b-h));
    if(d<best){best=d;closest=item;}
  }
  return closest;
@@ -124,7 +127,7 @@ function inspect(){
 }
 document.querySelector("#inspect").onclick=inspect;
 function canStand(px,py){
- return px>=14&&px<=mapWidth-14&&py>=44&&py<=mapHeight-12&&!furniture[room].some(([,a,b,w,h])=>
+ return px>=14&&px<=mapWidth-14&&py>=44&&py<=mapHeight-12&&!furniture[room].some(([kind,a,b,w,h])=> !["piano","guitar"].includes(kind)&&
    px>a-5&&px<a+w+5&&py>b+h*.60-2&&py<b+h+2);
 }
 function advance(dx,dy){

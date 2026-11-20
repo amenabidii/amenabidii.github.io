@@ -85,7 +85,7 @@ let teamTrail=[],teamDistance=0,teamTask=null;
 function teamRoster(){
  if(room==="field"||room==="memory3")return ["Dhiya","Ranya",...Array(9).fill("")];
  if(room==="memory1")return ["Teammate","Teammate"];
- if(room==="memory4")return ["Co-guide"];
+
  return [];
 }
 function resetTeam(){teamTrail=[[x,y,0]];teamDistance=0;teamTask=null;}

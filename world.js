@@ -25,7 +25,7 @@ function paint(){
  cameraX=clamp(x-canvas.width/2,0,mapWidth-canvas.width);
  cameraY=clamp(y-canvas.height/2,0,mapHeight-canvas.height);
  ctx.save();ctx.translate(-Math.round(cameraX),-Math.round(cameraY));
- sceneArt();drawAtmosphere();
+ sceneArt();drawAtmosphere();drawOrientationFloor();
  for(const [px,label] of doorsHere())door(px,label,accent);
  if(trail.length){block(backDoorX-14,mapHeight-26,28,25,"#081722");ctx.fillStyle=accent;ctx.font="bold 10px monospace";ctx.textAlign="center";ctx.fillText("BACK",backDoorX,mapHeight-9);}
  const instrument = started && nearby();
@@ -45,7 +45,7 @@ function paint(){
      return;
    }
    block(x-9,y-2,19,4,"#152932");
-   if(hero.complete&&hero.naturalWidth)ctx.drawImage(hero,Math.round(x)-13,Math.round(y)-30-Math.round(Math.abs(Math.sin(stride/6))*2),26,32);
+   if(hero.complete&&hero.naturalWidth)ctx.drawImage(hero,Math.round(x)-13,Math.round(y)-30-Math.round(Math.abs(Math.sin(room==="memory4"&&performance.now()<danceUntil?performance.now()/130:stride/6))*3),26,32);
  };
  let drawn=false;
  for(const item of [...furniture[room]].sort((a,b)=>(a[2]+a[4])-(b[2]+b[4]))){
@@ -53,7 +53,7 @@ function paint(){
    if(item[0]==="portal")drawPortal(item);else drawFurniture(item);
  }
  if(!drawn)drawHero();
- drawTeam();
+ drawTeam();drawOrientationPeople();
  if(room==="music"&&lightsLow)block(0,0,mapWidth,mapHeight,"#13234244");
  if(room==="music"&&plantWatered){const plant=furniture.music.find(i=>i[0]==="plant");block(plant[1]+8,plant[2],6,4,"#a6f592");}
  ctx.restore();
@@ -72,6 +72,7 @@ function paint(){
  button.textContent=item?"Inspect · "+(item[5]||item[0]):"Inspect nearby object";
 }
 hero.onload=paint;
+setInterval(()=>orientationTick(.06,performance.now()),60);
 setInterval(()=>{if((bachActive||guitarActive)&&!document.hidden)paint();},180);
 function tone(freq,duration,volume,type="triangle",delay=0,destination=context?.destination){
  if(muted||document.hidden||!context||context.state!=="running")return;
@@ -83,6 +84,7 @@ function tone(freq,duration,volume,type="triangle",delay=0,destination=context?.
 }
 function enter(id,back=false){
  if(!back && id!==room)trail.push(room);
+ if(room==="memory4" && id!==room){danceUntil=0;for(const p of orientationPeople)if(p.mode==="follow")p.mode="wait";}
  roomAction="";room=id;bachActive=false;guitarActive=false;currentItem=null;notifyWorld("");visited.add(room); x=backDoorX;y=mapHeight-86;
  canvas.width=mapWidth;canvas.height=mapHeight;resetTeam();
  if(room==="queue"){checkpoint=45;resetQueue();}
@@ -101,7 +103,8 @@ let stick=null;
 function clearMovement(){stick=null;held.clear();cancelAnimationFrame(frame);frame=0;previous=0;paint();}
 function nearby(){
  let closest=null,best=23;
- for(const item of furniture[room]){
+ const targets=room==="memory4"?[...orientationPeople.map(p=>p.item),dancePad,...furniture[room]]:furniture[room];
+ for(const item of targets){
    
    const [,a,b,w,h]=item;
    const d=Math.hypot(Math.max(a-x,0,x-a-w),Math.max(b+h*.55-y,0,y-b-h));
@@ -111,6 +114,7 @@ function nearby(){
 }
 function inspect(){
  const item=nearby();if(!item)return;
+ if(orientationAction(item)){paint();return;}
  joinTask(item);
  if(exploreItem(item)){paint();return;}
  roomAction=item[5]||item[0];notifyWorld(item[6]||("A "+item[0]+" in "+rooms[room][0]+"."));

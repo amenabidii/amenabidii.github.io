@@ -277,7 +277,7 @@ handoff.onsubmit=async event=>{
   }
 };
 function projectOrigin(text,col) {
-  if(!/why|motivat|inspir|reason|pourquoi|3lech|3lech|علاش|ليه|سبب/i.test(text)) return "";
+  if(!/why|motivat|inspir|reason|pourquoi|3lech|3lash|alech|3leh|leeh|علاش|ليه|سبب/i.test(text)) return "";
   if(/fly[\s‐‑–-]*qr/i.test(text) || (lastTopic===topics[0] && /^(why|pourquoi|علاش|ليه)[ ؟?!.]*$/i.test(text))){
     lastTopic=topics[0];
     return [
@@ -288,9 +288,12 @@ function projectOrigin(text,col) {
       "الفكرة بدأت من الطباعة في المكتبة. عشان ينقل ملف من الموبايل لكمبيوتر مشترك، كان ممكن يضطر يفتح حساب الرسايل الشخصي. عمل Fly-QR عشان يمسح كود ويبعت الملف ويقفل الجلسة."
     ][col+1];
   }
-  if(/lapwise|study room|mix blocker/i.test(text) && col<0){
-    const id=/lapwise/i.test(text)?2:/study room/i.test(text)?6:3;
-    return replyAbout(id);
-  }
+  const motives = [
+    [/lapwise/i,["Amen wanted a timer that could follow a whole session without making him restart it for every task. Recording each completed task as a lap solved that problem.","Amen voulait suivre toute une séance sans relancer le minuteur à chaque tâche. Chaque tâche terminée devient un tour chronométré.","7ab timer yetba3 séance kemla bla ma y3awed ystartih fi kol tâche. Kol tâche wallét lap.","حبّ تايمر يتبع الحصّة الكل من غير ما يعاود يشعلو لكل مهمّة. كل مهمّة تولّي دورة بوقتها.","كان عايز مؤقت يتابع الجلسة كلها من غير ما يبدأه تاني لكل مهمة. كل مهمة بقى ليها لفة بوقتها."]],
+    [/study room|réservation|حجز/i,["Amen noticed problems managing study-room reservations and availability at AUC. He turned those observations into requirements, secured university approval and completed the booking solution as a volunteer.","Amen a observé des difficultés de réservation à la bibliothèque. Il les a traduites en exigences, obtenu l’accord de l’université et réalisé la solution bénévolement.","Chaf mochkla fel réservation fel bibliothèque. 7added el besoins, khdha موافقة el fac w kammel el solution bénévole.","شاف مشاكل في حجز قاعات القراية، حدّد المطلوب وخذا موافقة الجامعة وكمّل الحلّ بالتطوّع.","لاحظ مشاكل في حجز قاعات المذاكرة. حدّد المطلوب، خد موافقة الجامعة وكمّل الحل كمتطوع."]],
+    [/youtube|mix blocker/i,["Opening a single song could unexpectedly attach an entire Mix. Amen wanted to keep that song and its timestamp while preserving playlists people actually chose.","Ouvrir un morceau pouvait ajouter un Mix entier. Amen voulait garder la vidéo et son horodatage tout en respectant les playlists choisies.","T7ell ghneya wa7da w YouTube yzid Mix kemel. Amen 7ab ykhalli el ghneya w wa9tha.","تحلّ غناية وحدة ويوتيوب يزيد Mix كامل. آمن حبّ يخلّي الغناية وتوقيتها ويحترم اختيارك.","تفتح أغنية واحدة، فيضيف يوتيوب Mix كامل. آمن حب يسيب الأغنية وتوقيتها ويحافظ على اختيارك."]]
+  ];
+  const match=motives.find(([pattern])=>pattern.test(text));
+  if(match) return match[1][col+1];
   return "";
 }

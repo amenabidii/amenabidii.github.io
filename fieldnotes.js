@@ -7,7 +7,7 @@ const exhibits = [
  ["The Observer Paradox","Receive signal|Undo a turn|Observer remembers","observer.html","Play the memory prototype",4],
  ["Cognitive performance","Sleep & stress|ANOVA / regression|Reaction & memory","resume.pdf#page=1","Research summary",5],
  ["Study room booking","Observed bottleneck|Define requirements|University approval","resume.pdf#page=1","Project summary",6],
- ["Social media & productivity","65,000 records|Transform in dplyr|Plot in ggplot2","resume.pdf#page=1","Analysis summary",7],
+ ["Social media & productivity","30,000 records|Transform in dplyr|Plot in ggplot2","resume.pdf#page=1","Analysis summary",7],
  ["SOUTRA","Health information|Design the site|Pitch at Camp4SRH","resume.pdf#page=1","Project summary",8],
  ["#activism","240+ young people|Climate workshops|400+ signatures","resume.pdf#page=2","Fieldwork record",9],
  ["#access","Visit facilities|Document barriers|Report findings","resume.pdf#page=2","Assessment record",10],

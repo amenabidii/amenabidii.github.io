@@ -1,0 +1,14 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Observer log · Amen Abidi</title><link rel="stylesheet" href="style.css"></head><body><main><section id="simulation"><a href="./#project-4">Back to portfolio</a><h1 style="font-size:clamp(3rem,9vw,7rem)">Observer log</h1><p>A playable sketch of the memory mechanic in The Observer Paradox. Advance the facility clock, then undo a turn. Watch what the observer keeps.</p><h2 id="turn">Turn 0</h2><div class="exhibit-actions"><button id="advance">Advance turn</button><button id="undo" disabled>Undo turn</button></div><ol id="history" aria-live="polite"></ol></section></main><script>
+let turn=0;
+const events=["A transmission arrives.","A researcher decodes a fragment.","The receiver falls silent."];
+function record(undo){
+  turn+=undo?-1:1;
+  document.querySelector("#turn").textContent="Turn "+turn;
+  document.querySelector("#undo").disabled=!turn;
+  const item=document.createElement("li");
+  item.textContent=undo?"Clock restored to turn "+turn+". Earlier observations remain.":"Turn "+turn+" · "+events[(turn-1)%events.length];
+  document.querySelector("#history").append(item);
+}
+document.querySelector("#advance").onclick=()=>record(false);
+document.querySelector("#undo").onclick=()=>record(true);
+</script></body></html>

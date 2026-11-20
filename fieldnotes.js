@@ -4,7 +4,7 @@ const exhibits = [
  ["VentureLab","Gather evidence|Challenge assumptions|Founder approves","https://github.com/amenabidii/VentureLab","Code and demo",1],
  ["Lapwise","Start session|Finish a task|Save its lap","https://lapwise-production.up.railway.app","Open Lapwise",2],
  ["YouTube Mix Blocker","Open a song|Inspect its queue|Keep the chosen video","https://github.com/amenabidii/Youtube-Mix-Blocker","Extension source",3],
- ["The Observer Paradox","Receive signal|Undo a turn|Observer remembers","resume.pdf","Portfolio résumé",4],
+ ["The Observer Paradox","Receive signal|Undo a turn|Observer remembers","observer.html","Play the memory prototype",4],
  ["Cognitive performance","Sleep & stress|ANOVA / regression|Reaction & memory","resume.pdf#page=1","Research summary",5],
  ["Study room booking","Observed bottleneck|Define requirements|University approval","resume.pdf#page=1","Project summary",6],
  ["Social media & productivity","65,000 records|Transform in dplyr|Plot in ggplot2","resume.pdf#page=1","Analysis summary",7],
@@ -44,3 +44,4 @@ exhibits.forEach(([key,steps,url,linkLabel,topic],i) => {
   card.append(diagram,actions);
 });
 document.querySelectorAll('a[href^="#project-"]').forEach(link=>link.onclick=()=>{document.querySelector(link.hash).open=true;});
+

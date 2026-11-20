@@ -123,3 +123,7 @@ header nav{gap:clamp(.45rem,1.7vw,1.5rem)}.org{display:flex;gap:.5rem;align-item
 .vision-lab label{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
 .vision-lab input{flex:1;min-width:4rem;accent-color:#83efda}
 .vision-lab output{min-width:3ch}
+#subscribe-form button[type="submit"]{appearance:none;min-height:44px;padding:.65rem 1.15rem;border:1px solid #88e6ce;border-radius:.45rem;background:#a3e8d8;color:#10242a;font:inherit;font-weight:700;cursor:pointer}
+#subscribe-form button[type="submit"]:hover{background:#c5ffef}
+#subscribe-form button[type="submit"]:focus-visible{outline:2px solid #fff;outline-offset:3px}
+#subscribe-form button[type="submit"]:disabled{opacity:.65;cursor:wait}

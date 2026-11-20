@@ -72,7 +72,7 @@ function exploreItem(item){
  switch(item[0]){
  case "lamp":lightsLow=!lightsLow;notifyWorld(lightsLow?"Reading lamp off · dusk settles over the room.":"Reading lamp on · warm light returns.");break;
  case "plant":plantWatered=true;notifyWorld("Watered the plant. A new leaf unfolds.");break;
- case "bench":notifyWorld("Piano bench · Walk up to the upright to start the full performance. Use its player controls to pause or change speed.");break;
+ case "bench":notifyWorld("Piano bench · Walk up to the upright to start the full performance. Step away to stop, or use the game’s sound switch.");break;
  case "shelf":notifyWorld(homeHints.shelf+" Journal: "+stampBook.size+"/"+honors.length+" stories.");break;
  case "bed":notifyWorld(homeHints.bed);break;
  case "desk":notifyWorld(homeHints.desk);break;

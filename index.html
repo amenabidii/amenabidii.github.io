@@ -64,10 +64,17 @@
     <button id="close-guide" type="button" aria-label="Close portfolio guide">×</button>
   </div>
   <div id="conversation" role="log" aria-label="Conversation" aria-live="polite"><p>Pull up a chair. Ask me about a project, my fieldwork in Tunisia, or what I play on stage.</p></div>
-  <div id="prompts" aria-label="Suggested questions"><button>Contact email?</button><button>What does Amen do now?</button><button>Technical skills?</button><button>Why Lapwise?</button><button>Climate activism?</button><button>Any music stories?</button></div>
+  <label class="lang-label">Reply language <select id="language"><option value="auto">Detect automatically</option><option value="en">English</option><option value="fr">Français</option><option value="tn">Tounsi · Arabizi</option><option value="ar-TN">تونسي</option><option value="ar-EG">مصري</option></select></label><div id="prompts" aria-label="Suggested questions"><button>Contact email?</button><button>What does Amen do now?</button><button>Technical skills?</button><button>Why Lapwise?</button><button>Climate activism?</button><button>Any music stories?</button></div>
   <form id="ask-form"><label for="question">Ask about Amen’s portfolio</label><div><input id="question" maxlength="240" required autocomplete="off" placeholder="How does FlyQR work?"><button>Send</button></div></form>
-</dialog>
-<script defer src="fieldnotes.js"></script><script src="guide.js" defer></script></body></html>
+<form id="handoff" hidden>
+<h4>Write to Amen</h4><p>Edit your question here. Your email app will open for review and sending.</p>
+<label>Your email <input type="email" name="email" required autocomplete="email"></label>
+<label>Question or feedback <textarea name="message" required maxlength="4000" rows="3" dir="auto"></textarea></label>
+<button>Open email draft</button> <button type="button" id="discard">Cancel</button>
+<a href="mailto:amenabidii@aucegypt.edu">amenabidii@aucegypt.edu</a>
+</form></dialog>
+<script defer src="languages.js"></script><script defer src="fieldnotes.js"></script><script src="guide.js" defer></script></body></html>
+
 
 
 

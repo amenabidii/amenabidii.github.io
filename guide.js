@@ -54,6 +54,7 @@ async function reply(text) {
 }
 function message(text, className) {
   const p = document.createElement("p");
+  p.dir="auto";
   p.className = className;
   p.textContent = text;
   conversation.append(p);
@@ -67,8 +68,10 @@ async function ask(text, topicId) {
   const bubble = message("Amenos is typing…", "answer");
   guide.classList.add("thinking");
   try {
-    const [answer] = await Promise.all([topicId === undefined ? reply(text) : replyAbout(topicId),new Promise(done => setTimeout(done,650))]);
+    const [answer] = await Promise.all([localizedReply(text,topicId),new Promise(done => setTimeout(done,650))]);
+    bubble.dir="auto";
     bubble.textContent = answer;
+    if (offerReferral) appendDraftButton(bubble,text);
   } catch {
     bubble.textContent = "My search is unavailable. Try an email, project or activity suggestion.";
   } finally {
@@ -182,3 +185,58 @@ function replyAbout(id) {
   const card=target.startsWith("#") ? document.querySelector(target) : projectCards[id];
   return [...new Set([card?.querySelector("p")?.textContent,extra].filter(Boolean))].join(" ");
 }
+
+let offerReferral=false;
+const escalate=[
+ "That’s a brilliant question for Amen. I don’t have that detail in my notes. Edit a draft below or email amenabidii@aucegypt.edu.",
+ "Excellente question pour Amen ! Je n’ai pas ce détail. Tu peux modifier ton brouillon ci-dessous ou écrire à amenabidii@aucegypt.edu.",
+ "Sou2el behi barcha! Ma 3andich el détail hedha. Tnajjem tbaddel el message w tab3athou l Amen: amenabidii@aucegypt.edu.",
+ "سؤال باهي برشا! ما عنديش التفصيل هذا. تنجّم تبدّل المساج وتبعثه لآمن: amenabidii@aucegypt.edu.",
+ "سؤال حلو أوي! التفصيلة دي مش عندي. تقدر تعدّل الرسالة وتبعتها لآمن: amenabidii@aucegypt.edu."
+];
+async function localizedReply(text,topicId) {
+  offerReferral=false;
+  const choice=document.querySelector("#language").value;
+  const locale=topicId===undefined ? detectLanguage(text) : (choice==="auto" ? conversationLocale : choice);
+  conversationLocale=locale;
+  const col=localeNames.indexOf(locale);
+  const opener=col<0?"":languageOpeners[col]+" ";
+  const missing=()=>{offerReferral=true;return opener+escalate[col+1];};
+  if(topicId===undefined && /salary|budget|how much|combien coûte|salaire|prix|قداش يكلّف|مرتب|بكام|تكلفة|funding|revenue|daily users|personal phone/i.test(text)) return missing();
+  if(topicId===undefined && /recipe|weather|politics|stock price|طقس|ماتش|météo|recette/i.test(text)) return ["I cover Amen’s portfolio. Try a project, his studies or his music.","Je réponds sur le parcours d’Amen. Demande-moi un projet ou ses études.","Nahki 3la parcours mta3 Amen. Es2elni 3al 9raya walla projet.","نحكي على مسيرة آمن. اسألني على القراية وإلا مشروع.","أنا هنا عشان أحكي عن آمن. اسألني عن دراسته أو مشاريعه."][col+1];
+  if(col<0){
+    if(topicId===19 || /research interests|robot perception|interested in/i.test(text)) return replyAbout(19);
+    const answer=topicId===undefined ? await reply(text) : replyAbout(topicId);
+    return answer===outside || answer.startsWith("Which part") ? missing() : answer;
+  }
+  if(/^(bonjour|salut|aslema|salem|عسلامة|أهلا|اهلا|ازيك)[!.؟ ]*$/i.test(text)) return opener;
+  let id=topicId;
+  if(id===undefined) {
+    id=localeTopics.findIndex(pattern=>pattern.test(text));
+    if(id<0) id=topics.findIndex(([pattern])=>pattern.test(text));
+    if(id<0 && /encore|زيد|zid|كمان/i.test(text)) id=topics.indexOf(lastTopic);
+    if(id<0 && modelReady) id=topics.indexOf(await semanticTopic(text));
+  }
+  if(!translations[id]) return missing();
+  lastTopic=topics[id];
+  return opener+translations[id][col];
+}
+const handoff=document.querySelector("#handoff");
+function appendDraftButton(bubble,text){
+  const button=document.createElement("button");
+  button.textContent=["Draft a question","Préparer un message","Ekteb l Amen","اكتب لآمن","اكتب لآمن"][localeNames.indexOf(conversationLocale)+1];
+  button.type="button";
+  button.onclick=()=>{
+    if(handoff.hidden) handoff.elements.message.value=text;
+    handoff.hidden=false;
+    handoff.elements.message.focus();
+  };
+  bubble.append(document.createElement("br"),button);
+}
+document.querySelector("#discard").onclick=()=>{handoff.reset();handoff.hidden=true;};
+handoff.onsubmit=event=>{
+  event.preventDefault();
+  if(!handoff.reportValidity()) return;
+  const body=handoff.elements.message.value.trim()+"\n\nReply to: "+handoff.elements.email.value.trim();
+  location.href="mailto:amenabidii@aucegypt.edu?subject=Amenos%20portfolio%20question&body="+encodeURIComponent(body);
+};

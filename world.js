@@ -143,7 +143,7 @@ function hold(key,dir){
 document.querySelector("#world-start").onclick=()=>{
  started=true;document.querySelector("#world-intro").hidden=true;document.querySelector(".world-panel").hidden=false;
  try{context=new AudioContext();context.resume().catch(()=>{});}catch{}
- enter("atrium");stage.focus({preventScroll:true});
+ enter("atrium");resizeWorld(true);stage.focus({preventScroll:true});
 };
 stage.onkeydown=e=>{
  if(started&&e.key.toLowerCase()==="e"){e.preventDefault();if(!e.repeat)inspect();return;}

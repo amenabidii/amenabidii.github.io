@@ -105,3 +105,9 @@ header nav{gap:clamp(.45rem,1.7vw,1.5rem)}.org{display:flex;gap:.5rem;align-item
 @media(hover:hover) and (prefers-reduced-motion:no-preference){#work details{transition:transform .18s ease}#work details:hover{transform:scale(1.012);position:relative;z-index:1}}
 #inquiry[open]{display:flex;flex-direction:column;padding:0;overflow:hidden}.inquiry-head{flex:none;display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.2rem;border-bottom:1px solid #365261;background:#12222c}
 .inquiry-scroll{overflow-y:auto;min-height:0;padding:.4rem 1.2rem 1rem;overscroll-behavior:contain}
+#study-plot{margin:1rem 0;padding:1rem;background:#10202c;box-shadow:none}#study-plot figcaption{padding:0 0 .7rem;border:0;font-weight:700}
+#study-plot select{font:inherit;background:#0b1823;color:#e0f2fa;border:1px solid #496877;padding:.3rem}
+.quartiles{position:relative;height:2.4rem;margin:1rem .2rem .35rem;background:linear-gradient(#64888d,#64888d) center/100% 2px no-repeat;border-inline:2px solid #64888d}
+.quartiles i{position:absolute;left:var(--q1);right:calc(100% - var(--q3));top:15%;height:70%;background:#42776e;border:1px solid #79d6c2}.quartiles b{position:absolute;left:var(--median);height:100%;width:3px;background:#ffd591}
+#stat-values{display:grid;grid-template-columns:repeat(5,1fr);gap:.22rem;font-size:.75rem}#stat-values strong{display:block;color:#b6ecdd}.study-source{font-size:.8rem}
+.footer-updates{flex-basis:100%;max-width:48rem}.footer-updates summary{font-size:1.05rem}.footer-updates form{padding:.8rem 0}.footer-updates label{display:block}.footer-updates .consent{margin:.8rem 0}.consent input{width:auto}.footer-updates input[type=email]{width:min(19rem,100%);padding:.45rem}.footer-updates button{padding:.45rem .8rem;cursor:pointer}

@@ -36,3 +36,9 @@ canvas.addEventListener("pointermove", event => {
 });
 drawSignal();
 
+const cursorEffects = matchMedia("(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference)");
+document.addEventListener("pointermove", event => {
+  if (!cursorEffects.matches) return;
+  document.body.style.setProperty("--mx", event.clientX + "px");
+  document.body.style.setProperty("--my", event.clientY + "px");
+}, { passive:true });

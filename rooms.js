@@ -1,3 +1,13 @@
+const rooms = {
+ queue:["The referral rush","Get past the wasta queue-jumpers and take both proofs to the interview desk in the east.","#contact","Studio","studio","Atrium","atrium","#ebb17f"],
+ atrium:["The atrium","Help Amen earn a software position. Start north-west at Work, then take your evidence to the code lab.","#research","Work","work","Campus","campus","#6de9cd"],
+ work:["Amen’s office","At a library printer, a file on a phone needed a way onto a shared PC. Fly-QR grew out of that small frustration.","#project-0","Research","research","Studio","studio","#86ceff"],
+ campus:["Campus commons","As a peer moderator, Amen co-guided 49 incoming AUC students. Two doors lead beyond orientation.","#campus","Fieldwork","field","Music","music","#efc77c"],
+ research:["Research lab","A team led by Amen explored sleep, stress, memory and reaction time across 80,000 records.","#project-5","Studio","studio","Atrium","atrium","#baacff"],
+ studio:["Night-shift code lab","Turn back the clock in The Observer Paradox and the observer still remembers. Try that mechanic in the project gallery.","#project-4","Workshop","work","Hiring","queue","#ec98ad"],
+ field:["Kasserine field station","More than 240 young people contributed to climate research. Amen co-led a petition that gathered over 400 signatures.","#activism","Music","music","Atrium","atrium","#a7e8a4"],
+ music:["Bedroom & piano","Amen played piano at more than 15 university events with AUC Musicana. Approach the upright piano to hear G Minor Bach from Piano Tiles 2.","#piano","Fieldwork","field","Campus","campus","#ffb1a0"]
+};
 // Furniture positions are in floor pixels. Depth is the solid footprint at the base.
 const furniture={
  atrium:[

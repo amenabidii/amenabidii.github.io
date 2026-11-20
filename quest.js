@@ -22,7 +22,7 @@ function music(){
  function next(){
    if(muted||document.hidden||!started)return;
    const [pulse,voice,notes]=scores[room];
-   const duration=bachActive?150:pulse;
+   const duration=bachActive?(benchTempo?195:150):pulse;
    if(bachActive){
      const step=melodyStep%16;
      const bar=pianoBars[Math.floor(melodyStep/16)%pianoBars.length];

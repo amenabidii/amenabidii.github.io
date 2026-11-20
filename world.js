@@ -1,14 +1,4 @@
 // Two doors at the north end of each room. The southern arch leads back.
-const rooms = {
- queue:["The referral rush","Get past the wasta queue-jumpers and take both proofs to the interview desk in the east.","#contact","Studio","studio","Atrium","atrium","#ebb17f"],
- atrium:["The atrium","Help Amen earn a software position. Start north-west at Work, then take your evidence to the code lab.","#research","Work","work","Campus","campus","#6de9cd"],
- work:["Amen’s office","At a library printer, a file on a phone needed a way onto a shared PC. Fly-QR grew out of that small frustration.","#project-0","Research","research","Studio","studio","#86ceff"],
- campus:["Campus commons","As a peer moderator, Amen co-guided 49 incoming AUC students. Two doors lead beyond orientation.","#campus","Fieldwork","field","Music","music","#efc77c"],
- research:["Research lab","A team led by Amen explored sleep, stress, memory and reaction time across 80,000 records.","#project-5","Studio","studio","Atrium","atrium","#baacff"],
- studio:["Night-shift code lab","Turn back the clock in The Observer Paradox and the observer still remembers. Try that mechanic in the project gallery.","#project-4","Workshop","work","Hiring","queue","#ec98ad"],
- field:["Kasserine field station","More than 240 young people contributed to climate research. Amen co-led a petition that gathered over 400 signatures.","#activism","Music","music","Atrium","atrium","#a7e8a4"],
- music:["Bedroom & piano","Amen played piano at more than 15 university events with AUC Musicana. Approach the upright piano to hear G Minor Bach from Piano Tiles 2.","#piano","Fieldwork","field","Campus","campus","#ffb1a0"]
-};
 const canvas=document.querySelector("#world-canvas");
 const ctx=canvas.getContext("2d");
 const stage=canvas.parentElement;
@@ -36,7 +26,7 @@ function paint(){
  cameraY=clamp(y-canvas.height/2,0,mapHeight-canvas.height);
  ctx.save();ctx.translate(-Math.round(cameraX),-Math.round(cameraY));
  sceneArt();drawAtmosphere();
- door(westDoorX,rooms[room][3],accent);door(eastDoorX,rooms[room][5],accent);
+ for(const [px,label] of doorsHere())door(px,label,accent);
  if(trail.length){block(backDoorX-14,mapHeight-26,28,25,"#081722");ctx.fillStyle=accent;ctx.font="bold 10px monospace";ctx.textAlign="center";ctx.fillText("BACK",backDoorX,mapHeight-9);}
  const drawHero=()=>{
    block(x-9,y-2,19,4,"#152932");
@@ -45,14 +35,17 @@ function paint(){
  let drawn=false;
  for(const item of [...furniture[room]].sort((a,b)=>(a[2]+a[4])-(b[2]+b[4]))){
    if(!drawn&&item[2]+item[4]>y){drawHero();drawn=true;}
-   drawFurniture(item);
+   if(item[0]==="portal")drawPortal(item);else drawFurniture(item);
  }
  if(!drawn)drawHero();
+ drawTeam();
+ if(room==="music"&&lightsLow)block(0,0,mapWidth,mapHeight,"#13234244");
+ if(room==="music"&&plantWatered){const plant=furniture.music.find(i=>i[0]==="plant");block(plant[1]+8,plant[2],6,4,"#a6f592");}
  ctx.restore();
  // The pocket map marks the player, both exits, and the current camera window.
  block(268,5,79,45,"#08121ce6");
  ctx.strokeStyle="#557480";ctx.strokeRect(270+cameraX*(74/mapWidth),7+cameraY*(40/mapHeight),canvas.width*(74/mapWidth),canvas.height*(40/mapHeight));
- for(const px of [westDoorX,eastDoorX])block(270+px*(74/mapWidth),11,3,3,accent);
+ for(const [px] of doorsHere())block(270+px*(74/mapWidth),11,3,3,accent);
  block(270+x*(74/mapWidth),7+y*(40/mapHeight),4,4,"#fff3ba");
  const item=nearby(),button=document.querySelector("#inspect");
  if(started&&item!==currentItem){
@@ -77,6 +70,7 @@ function tone(freq,duration,volume,type="triangle"){
 function enter(id,back=false){
  if(!back && id!==room)trail.push(room);
  roomAction="";room=id;bachActive=false;currentItem=null;notifyWorld("");visited.add(room); x=backDoorX;y=mapHeight-86;
+ canvas.width=room==="music"?mapWidth:352;canvas.height=room==="music"?mapHeight:224;resetTeam();
  if(room==="queue"){checkpoint=45;resetQueue();}
  const [name,note,url]=rooms[room];
  document.querySelector("#room-name").textContent=name;
@@ -103,6 +97,8 @@ function nearby(){
 }
 function inspect(){
  const item=nearby();if(!item)return;
+ joinTask(item);
+ if(exploreItem(item)){paint();return;}
  roomAction=item[5]||item[0];notifyWorld(item[6]||("A "+item[0]+" in "+rooms[room][0]+"."));
  if(item[0]!=="piano")tone(392,.12,.07);
  award(item);
@@ -116,7 +112,9 @@ function canStand(px,py){
 function advance(dx,dy){
  if(canStand(x+dx,y))x+=dx;
  if(canStand(x,y+dy))y+=dy;
- if(y<=49&&(Math.abs(x-westDoorX)<14||Math.abs(x-eastDoorX)<14)){enter(rooms[room][x<backDoorX?4:6]);clearMovement();return;}
+ const exit=doorsHere().find(([px])=>Math.abs(x-px)<14);
+ if(y<=49&&exit){enter(exit[2]);clearMovement();return;}
+
  if(trail.length&&y>=mapHeight-23&&Math.abs(x-backDoorX)<15){enter(trail.pop(),true);clearMovement();}
 }
 function walk(now){
@@ -129,6 +127,7 @@ function walk(now){
  if(length){
    const ox=x,oy=y;
    advance(dx/length*116*dt,dy/length*116*dt);
+   moveTeam(ox,oy);
    if(held.size||stick)stride+=Math.hypot(x-ox,y-oy);
    paint();
  }
@@ -143,7 +142,7 @@ function hold(key,dir){
 document.querySelector("#world-start").onclick=()=>{
  started=true;document.querySelector("#world-intro").hidden=true;document.querySelector(".world-panel").hidden=false;
  try{context=new AudioContext();context.resume().catch(()=>{});}catch{}
- enter("atrium");resizeWorld(true);stage.focus({preventScroll:true});
+ enter("music");resizeWorld(true);stage.focus({preventScroll:true});
 };
 stage.onkeydown=e=>{
  if(started&&e.key.toLowerCase()==="e"){e.preventDefault();if(!e.repeat)inspect();return;}

@@ -23,3 +23,20 @@ for(const h of honors){
  }
  highlights.append(li);
 }
+const activityStories = [
+  {tag:"Scholarship", match:/welcome dinner|new cohort|usher|welcome.*leader/i, post:"7513679790877515777", title:"Welcoming 55 new scholars", text:"I ushered at the welcome dinner for 55 new students from across MENA. Meeting the incoming cohort reminded me how unfamiliar AUC felt when I first arrived."},
+  {tag:"Scholarship", match:/symposium|fundrais|triple i|evidence to action/i, post:"7454159851665989632", title:"From evidence to action", text:"For the April 18–19 Tomorrow’s Leaders Symposium, I reached out to NGOs and partners on the fundraising committee. A panel on research in MENA introduced me to three barriers to putting evidence into policy: ignorance, inertia and ideology. Timing and communication stayed with me as much as the research itself."},
+  {tag:"Scholarship", match:/team.building|sherief/i, post:"7429160337079345152", title:"Preparing for the symposium", text:"The Tomorrow’s Leaders committees started preparing with a team-building session led by former team member Sherief Khalil and the TL staff. The activities focused on communication, trust and sharing responsibility across committees."},
+  {tag:"Leadership", match:/first year|orientation|peer moderat|\bfye\b|haitham|jana shahin/i, post:"7502075407463116800", title:"Helping a group of 49 find its feet", text:"Haitham Ahmed Aloqab, Jana Shahin and I guided 49 students during orientation for a class of over 1,400 freshmen. We ran activities, answered questions and helped the quieter students feel comfortable joining in."},
+  {tag:"Finance", match:/finomics|trading simulation|broker|market simulation/i, post:"7510346015758036992", title:"When a simulated order fails", text:"In the AUC Business Association simulation, participants moved prices through supply and demand. Missed trades and failed orders taught me how liquidity, timing and commissions affect a decision. Sessions with NAEEM Holding, Beltone and Wadi Degla Developments brought an industry perspective to the exercise."},
+  {tag:"Music", match:/iftar|ramadan|packing/i, post:"7432898243820179457", title:"Piano after the packing shift", text:"I played piano with Musicana at AUC’s Ramadan iftar packing event. Across 43 student organizations, volunteers prepared over 6,000 packs for families in Egypt. President Ahmad Dallal and Dean of Students Yorgun Marcel joined the event."},
+  {tag:"Music", match:/culturefest|tahrir|musicana/i, post:"7453509800308502528", title:"On stage at Tahrir CultureFest", text:"I performed with Musicana at Tahrir CultureFest 2026. Between performances I explored immersive VR and listened to conversations with Amr Mostafa and Sherif Nouredin about culture, creativity and Cairo."},
+  {tag:"Research", match:/unicef|activism|fieldwork|radhia|participatory action/i, post:"7441940176433684480", title:"Where my activism began", text:"Participatory Action Research with UNICEF Tunisie was my first experience working alongside professionals on a community issue. It gave me the confidence to take on more advocacy work. Radhia Louhichi helped make that first opportunity possible."}
+];
+for(const story of activityStories){
+  const row=Array.from(highlights.children).find(li=>li.querySelector(".award-tag").textContent===story.tag);
+  const details=document.createElement("details"),summary=document.createElement("summary"),p=document.createElement("p"),link=document.createElement("a");
+  summary.textContent=story.title;p.textContent=story.text;link.textContent="Read the LinkedIn post";
+  link.href="https://www.linkedin.com/feed/update/urn:li:"+ (story.post==="7429160337079345152"?"ugcPost":"activity")+":"+story.post+"/";
+  details.append(summary,p,link);row.lastElementChild.append(details);
+}

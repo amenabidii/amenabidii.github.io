@@ -221,6 +221,8 @@ async function localizedReply(text,topicId) {
     "في القصرين كانوا 12 باحث وباحثة شبان، منهم آمن وضياء ورانيا. أكثر من 240 شاب شاركوا في البحث.",
     "في القصرين كانوا 12 باحث وباحثة شُبّان، منهم آمن وضياء ورانيا، وشارك في البحث أكتر من 240 شاب."
   ][col+1];
+  const story=activityStories.find(entry=>entry.match.test(text));
+  if(story && col<0) return "From Amen’s post, in first-person summary: "+story.text;
   const origin = projectOrigin(text,col);
   if(origin) return opener+origin;
   if(col<0){

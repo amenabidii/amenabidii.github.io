@@ -24,8 +24,8 @@ const notice=document.querySelector("#world-toast");
 function notifyWorld(text){notice.textContent=text;notice.hidden=!text;}
 
 function block(a,b,w,h,color){ctx.fillStyle=color;ctx.fillRect(a,b,w,h);}
-function door(tileX,label,accent){
- const a=tileX*32;
+function door(centerX,label,accent){
+ const a=centerX-16;
  block(a+1,3,30,44,"#07121e");block(a+3,6,26,38,accent);block(a+6,10,20,34,"#192b3c");block(a+9,14,14,24,"#0b1827");block(a+20,27,3,3,accent);
  ctx.font="bold 9px monospace";ctx.textAlign="center";const w=ctx.measureText(label).width;
  block(a+16-w/2-3,45,w+6,12,"#0a1621");ctx.fillStyle=accent;ctx.fillText(label,a+16,54);
@@ -36,8 +36,8 @@ function paint(){
  cameraY=clamp(y-canvas.height/2,0,mapHeight-canvas.height);
  ctx.save();ctx.translate(-Math.round(cameraX),-Math.round(cameraY));
  sceneArt();drawAtmosphere();
- door(2,rooms[room][3],accent);door(18,rooms[room][5],accent);
- if(trail.length){block(338,342,28,25,"#081722");ctx.fillStyle=accent;ctx.font="bold 10px monospace";ctx.textAlign="center";ctx.fillText("BACK",352,359);}
+ door(westDoorX,rooms[room][3],accent);door(eastDoorX,rooms[room][5],accent);
+ if(trail.length){block(backDoorX-14,mapHeight-26,28,25,"#081722");ctx.fillStyle=accent;ctx.font="bold 10px monospace";ctx.textAlign="center";ctx.fillText("BACK",backDoorX,mapHeight-9);}
  const drawHero=()=>{
    block(x-9,y-2,19,4,"#152932");
    if(hero.complete&&hero.naturalWidth)ctx.drawImage(hero,Math.round(x)-13,Math.round(y)-30-Math.round(Math.abs(Math.sin(stride/6))*2),26,32);
@@ -51,9 +51,9 @@ function paint(){
  ctx.restore();
  // The pocket map marks the player, both exits, and the current camera window.
  block(268,5,79,45,"#08121ce6");
- ctx.strokeStyle="#557480";ctx.strokeRect(270+cameraX*.104,7+cameraY*.108,canvas.width*.104,canvas.height*.108);
- for(const px of [80,592])block(270+px*.104,11,3,3,accent);
- block(270+x*.104,7+y*.108,4,4,"#fff3ba");
+ ctx.strokeStyle="#557480";ctx.strokeRect(270+cameraX*(74/mapWidth),7+cameraY*(40/mapHeight),canvas.width*(74/mapWidth),canvas.height*(40/mapHeight));
+ for(const px of [westDoorX,eastDoorX])block(270+px*(74/mapWidth),11,3,3,accent);
+ block(270+x*(74/mapWidth),7+y*(40/mapHeight),4,4,"#fff3ba");
  const item=nearby(),button=document.querySelector("#inspect");
  if(started&&item!==currentItem){
    currentItem=item;
@@ -76,7 +76,7 @@ function tone(freq,duration,volume,type="triangle"){
 }
 function enter(id,back=false){
  if(!back && id!==room)trail.push(room);
- roomAction="";room=id;bachActive=false;currentItem=null;notifyWorld("");visited.add(room); x=352;y=282;
+ roomAction="";room=id;bachActive=false;currentItem=null;notifyWorld("");visited.add(room); x=backDoorX;y=mapHeight-86;
  if(room==="queue"){checkpoint=45;resetQueue();}
  const [name,note,url]=rooms[room];
  document.querySelector("#room-name").textContent=name;
@@ -116,8 +116,8 @@ function canStand(px,py){
 function advance(dx,dy){
  if(canStand(x+dx,y))x+=dx;
  if(canStand(x,y+dy))y+=dy;
- if(y<=49&&(Math.abs(x-80)<14||Math.abs(x-592)<14)){enter(rooms[room][x<352?4:6]);clearMovement();return;}
- if(trail.length&&y>=345&&Math.abs(x-352)<15){enter(trail.pop(),true);clearMovement();}
+ if(y<=49&&(Math.abs(x-westDoorX)<14||Math.abs(x-eastDoorX)<14)){enter(rooms[room][x<backDoorX?4:6]);clearMovement();return;}
+ if(trail.length&&y>=mapHeight-23&&Math.abs(x-backDoorX)<15){enter(trail.pop(),true);clearMovement();}
 }
 function walk(now){
  const dt=previous?Math.min((now-previous)/1000,.04):1/60;
@@ -128,7 +128,7 @@ function walk(now){
  const length=Math.hypot(dx,dy);
  if(length){
    const ox=x,oy=y;
-   advance(dx/length*98*dt,dy/length*98*dt);
+   advance(dx/length*116*dt,dy/length*116*dt);
    if(held.size||stick)stride+=Math.hypot(x-ox,y-oy);
    paint();
  }

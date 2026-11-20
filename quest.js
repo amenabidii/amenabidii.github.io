@@ -27,7 +27,7 @@ const evidence=new Set();
 let offer=false, agents=[],checkpoint=45, catchGrace=0;
 function resetQueue(){
  x=checkpoint;y=186;
- agents=[{x:226,y:81,pace:34},{x:401,y:284,pace:39},{x:537,y:113,pace:34}];
+ agents=[{x:226,y:81,pace:34},{x:340,y:255,pace:39},{x:480,y:102,pace:34}];
  catchGrace=performance.now()+1400;
 }
 function objective(){
@@ -48,7 +48,7 @@ function award(item){
 }
 function chase(dt,now){
  if(room!=="queue"||offer||document.hidden)return;
- if(x>350&&checkpoint===45){checkpoint=355;notifyWorld("Shortlisted! Retry checkpoint reached.");}
+ if(x>mapWidth/2&&checkpoint===45){checkpoint=mapWidth/2+4;notifyWorld("Shortlisted! Retry checkpoint reached.");}
  for(const agent of agents){
    const dist=Math.hypot(x-agent.x,y-agent.y);
    if(dist<13&&now>catchGrace){resetQueue();notifyWorld("A wasta referral jumped the line. Try another aisle — your evidence is safe.");return;}
@@ -67,7 +67,7 @@ function drawAtmosphere(){
    for(let i=0;i<40;i++){const h=4+Math.abs(Math.sin(i*.9+performance.now()/1200))*29;block(274+i*3.8,89-h,2,h,"#398e72");}
  }
  if(room==="queue"){
-   ctx.font="bold 10px monospace";ctx.fillStyle="#ffe79a";ctx.textAlign="left";ctx.fillText("INTERVIEWS  →",445,191);
+   ctx.font="bold 10px monospace";ctx.fillStyle="#ffe79a";ctx.textAlign="left";ctx.fillText("INTERVIEWS  →",mapWidth-190,191);
    for(const a of agents){
      block(a.x-6,a.y-18,12,13,"#69394d");block(a.x-4,a.y-26,8,8,"#d0a481");block(a.x-6,a.y-28,11,4,"#322b39");
      block(a.x-5,a.y-6,3,6,"#1a2531");block(a.x+2,a.y-6,3,6,"#1a2531");block(a.x+5,a.y-10,7,6,"#af754f");

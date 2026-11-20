@@ -38,10 +38,11 @@ const sceneColors={queue:["#4c3c43","#624c52","#ddac73"],
  studio:["#142e29","#24463c","#50b380"],field:["#455648","#576751","#8c9f69"],
  music:["#574443","#69534c","#c69576"]
 };
-const mapWidth=704,mapHeight=368;
+const mapWidth=608,mapHeight=320;
+const westDoorX=80,eastDoorX=mapWidth-80,backDoorX=mapWidth/2;
 // Spread the furnishings across a walkable floor larger than the camera viewport.
 for(const items of Object.values(furniture)){
- for(const item of items){item[1]=Math.round(item[1]*1.97);item[2]=Math.round(item[2]*1.52);}
+ for(const item of items){item[1]=Math.round(item[1]*1.65);item[2]=Math.round(item[2]*1.30);}
 }
 function sceneArt(){
  const [floor,seam,trim]=sceneColors[room];

@@ -34,7 +34,7 @@ const furniture={
   ["tree",232,61,41,54],["tree",286,105,43,58],["bench",212,159,61,23],["plant",34,148,26,33]],
  music:[
   ["bed",17,66,52,74,"Bedside notebook","This imagined bedroom connects Amen’s life on campus with his piano performances."],
-  ["lamp",80,83,21,37],["piano",202,72,101,56,"Play the upright piano","Now playing: the full performance of Luo Ni’s G Minor Bach from Piano Tiles 2. Amen performs with AUC Musicana."],
+  ["guitar",108,132,29,44,"Acoustic guitar","Bella by GIMS · D minor, A minor, E7, A minor. Step away to finish playing."],["lamp",80,83,21,37],["piano",202,72,101,56,"Play the upright piano","Now playing: the full performance of Luo Ni’s G Minor Bach from Piano Tiles 2. Amen performs with AUC Musicana."],
   ["bench",225,140,51,21],["shelf",93,57,60,39],["plant",305,150,24,37],["table",38,158,48,23]]
 };
 furniture.queue=[
@@ -105,6 +105,9 @@ function drawFurniture(item){
    if(kind==="plant"){poly([[15,29],[48,29],[43,46],[20,46]],wood);r(12,28,39,5,edge);}
    r(29,10,6,kind==="tree"?35:20,wood);
    for(const [u,v,c] of [[6,9,"#3d7769"],[20,0,"#528f78"],[33,8,"#6ca281"],[15,18,"#4b856b"]])poly([[u,v+9],[u+8,v],[u+23,v+2],[u+22,v+13],[u+9,v+17]],c);break;
+ case "guitar":
+   r(27,0,11,9,edge);r(30,8,6,18,wood);r(22,23,21,8,edge);r(18,31,29,11,edge);
+   r(22,42,21,3,wood);r(28,28,8,6,dark);r(32,7,1,32,paper);r(26,38,13,2,dark);break;
  case "piano":
    r(4,2,56,31,"#493b3e");r(6,5,52,3,edge);r(9,10,46,13,"#70504b");r(23,13,17,9,paper);r(31,13,1,9,wood);
    r(2,26,60,9,dark);for(let i=0;i<18;i++){r(5+i*3,27,2.7,7,paper);if(i%7!==2&&i%7!==6)r(7+i*3,26,1.8,4,dark);}

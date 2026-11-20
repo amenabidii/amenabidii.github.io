@@ -28,13 +28,28 @@ function paint(){
  sceneArt();drawAtmosphere();
  for(const [px,label] of doorsHere())door(px,label,accent);
  if(trail.length){block(backDoorX-14,mapHeight-26,28,25,"#081722");ctx.fillStyle=accent;ctx.font="bold 10px monospace";ctx.textAlign="center";ctx.fillText("BACK",backDoorX,mapHeight-9);}
+ const instrument = started && nearby();
+ const playing = instrument && ["piano","guitar"].includes(instrument[0]);
  const drawHero=()=>{
+   if(playing && hero.complete && hero.naturalWidth){
+     const [,a,b,w,h]=instrument, px=Math.round(a+w/2), py=b+h+9;
+     const beat=Math.floor(performance.now()/200)%2;
+     block(px-8,py-3,16,3,"#a57852");block(px-6,py,3,6,"#624538");block(px+4,py,3,6,"#624538");
+     ctx.drawImage(hero,px-11,py-26,22,25);
+     if(instrument[0]==="guitar"){
+       block(px-6,py-12,12,8,"#c99155");block(px+4,py-12,12,3,"#9c714d");
+       block(px-2,py-12+beat*2,4,3,"#e5b798");
+     }else{
+       block(px-9,py-17+beat,6,3,"#e5b798");block(px+3,py-16-beat,6,3,"#e5b798");
+     }
+     return;
+   }
    block(x-9,y-2,19,4,"#152932");
    if(hero.complete&&hero.naturalWidth)ctx.drawImage(hero,Math.round(x)-13,Math.round(y)-30-Math.round(Math.abs(Math.sin(stride/6))*2),26,32);
  };
  let drawn=false;
  for(const item of [...furniture[room]].sort((a,b)=>(a[2]+a[4])-(b[2]+b[4]))){
-   if(!drawn&&item[2]+item[4]>y){drawHero();drawn=true;}
+   if(!playing&&!drawn&&item[2]+item[4]>y){drawHero();drawn=true;}
    if(item[0]==="portal")drawPortal(item);else drawFurniture(item);
  }
  if(!drawn)drawHero();
@@ -46,7 +61,10 @@ function paint(){
  if(started&&item!==currentItem){
    currentItem=item;
    const atPiano=item?.[0]==="piano";
-   if(atPiano!==bachActive){bachActive=atPiano;music();}
+   const atGuitar=item?.[0]==="guitar";
+   if(atPiano!==bachActive || atGuitar!==guitarActive){
+     bachActive=atPiano;guitarActive=atGuitar;music();
+   }
    notifyWorld(item ? (item[0]==="piano"?"♪ G Minor Bach · Piano Tiles 2":(item[5]||item[0])+" nearby")+" · Press E to inspect" : "");
  }
  button.hidden=!started||!item;
@@ -54,17 +72,18 @@ function paint(){
  button.textContent=item?"Inspect · "+(item[5]||item[0]):"Inspect nearby object";
 }
 hero.onload=paint;
-function tone(freq,duration,volume,type="triangle"){
+setInterval(()=>{if((bachActive||guitarActive)&&!document.hidden)paint();},180);
+function tone(freq,duration,volume,type="triangle",delay=0,destination=context?.destination){
  if(muted||document.hidden||!context||context.state!=="running")return;
- const osc=context.createOscillator(),gain=context.createGain(),t=context.currentTime;
+ const osc=context.createOscillator(),gain=context.createGain(),t=context.currentTime+delay;
  osc.type=type;osc.frequency.value=freq;gain.gain.setValueAtTime(.001,t);
  gain.gain.exponentialRampToValueAtTime(volume,t+.012);gain.gain.exponentialRampToValueAtTime(.001,t+duration);
- osc.connect(gain).connect(context.destination);osc.start(t);osc.stop(t+duration+.01);
+ osc.connect(gain).connect(destination);osc.start(t);osc.stop(t+duration+.01);
  osc.onended=()=>{osc.disconnect();gain.disconnect();};
 }
 function enter(id,back=false){
  if(!back && id!==room)trail.push(room);
- roomAction="";room=id;bachActive=false;currentItem=null;notifyWorld("");visited.add(room); x=backDoorX;y=mapHeight-86;
+ roomAction="";room=id;bachActive=false;guitarActive=false;currentItem=null;notifyWorld("");visited.add(room); x=backDoorX;y=mapHeight-86;
  canvas.width=mapWidth;canvas.height=mapHeight;resetTeam();
  if(room==="queue"){checkpoint=45;resetQueue();}
  const [name,note,url]=rooms[room];
@@ -95,7 +114,7 @@ function inspect(){
  joinTask(item);
  if(exploreItem(item)){paint();return;}
  roomAction=item[5]||item[0];notifyWorld(item[6]||("A "+item[0]+" in "+rooms[room][0]+"."));
- if(item[0]!=="piano")tone(392,.12,.07);
+ if(!["piano","guitar"].includes(item[0]))tone(392,.12,.07);
  award(item);
  paint();
 }
@@ -138,7 +157,7 @@ function hold(key,dir){
 document.querySelector("#world-start").onclick=()=>{
  started=true;document.querySelector("#world-intro").hidden=true;document.querySelector(".world-panel").hidden=false;
  try{context=new AudioContext();context.resume().catch(()=>{});}catch{}
- enter("music");notifyWorld("Walk up to an object and press E to inspect it. On touchscreens, tap Inspect.");resizeWorld(true);stage.focus({preventScroll:true});
+ enter("music");notifyWorld("Walk up to an object and press E to inspect it. On touchscreens, tap Inspect.");stage.focus({preventScroll:true});
 };
 stage.onkeydown=e=>{
  if(!document.querySelector("#memory-choice").hidden)return;

@@ -8,12 +8,25 @@ const scores={
  music:[490,"sine",[55,62,67,70,0,65,62,0]],
  queue:[175,"triangle",[43,43,0,50,46,0,49,48]]
 };
-let bachActive=false;
+// Bella chorus harmony in open guitar voicings: Dm, Am, E7, Am.
+const bellaChords=[[50,57,62,65],[45,52,57,60,64],[40,47,50,56,59,64],[45,52,57,60,64]];
+let bachActive=false,guitarActive=false,guitarBus=null;
 function music(){
  clearTimeout(musicTimer);melodyStep=0;
  syncPiano(bachActive&&!muted&&!document.hidden&&started);
+ guitarBus?.disconnect();guitarBus=null;
+ if(guitarActive && context && !muted && !document.hidden){
+   guitarBus=context.createGain();guitarBus.connect(context.destination);
+ }
  function next(){
    if(muted||document.hidden||!started||bachActive)return;
+   if(guitarActive){
+     if(!guitarBus)return;
+     const beat=melodyStep%4,chord=bellaChords[Math.floor(melodyStep/4)%4];
+     const strings=beat%2 ? chord.slice(-3).reverse() : chord;
+     strings.forEach((pitch,i)=>tone(440*2**((pitch-69)/12),beat%2?.25:.50,.046,"triangle",i*.019,guitarBus));
+     melodyStep++;musicTimer=setTimeout(next,525);return;
+   }
    const [pulse,voice,notes]=scores[room],pitch=notes[melodyStep%notes.length];
    if(pitch)tone(440*2**((pitch-69)/12),pulse*.00091,voice==="square"?.014:.045,voice);
    melodyStep++;musicTimer=setTimeout(next,pulse);

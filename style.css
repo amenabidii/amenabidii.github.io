@@ -64,3 +64,8 @@ footer {padding-bottom:5rem}
 .lab-input button{flex:1;background:#152b39;color:white;border:1px solid #486273;cursor:pointer;padding:.45rem .1rem}
 .lab-input button[aria-pressed=true]{color:#09201f;background:#75edda}
 .lab-input input{width:9rem;max-width:55vw;font:inherit}.lab-note{padding-top:1rem}
+.research-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,19rem),1fr));gap:2rem}.research-grid article{border-top:1px solid #395363;padding-top:1rem}
+figure.process-sample{display:flex;align-items:stretch;gap:1px;margin:1.1rem 0;box-shadow:none;border:1px solid #365261;background:#365261}
+.process-sample span{flex:1;display:grid;align-content:center;padding:.75rem;background:linear-gradient(135deg,#192e3d,#101a26);color:#b4eee4;font: .82rem/1.45 Consolas,monospace}
+.exhibit-actions{display:flex;align-items:center;flex-wrap:wrap;gap:1rem;margin:.8rem 0}.exhibit-actions button{background:#152b36;border:1px solid #466878;color:#aeffed;border-radius:4px;padding:.45rem .75rem;cursor:pointer}
+header nav{flex-wrap:wrap}

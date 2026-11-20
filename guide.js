@@ -60,14 +60,14 @@ function message(text, className) {
   conversation.scrollTop = conversation.scrollHeight;
   return p;
 }
-async function ask(text) {
+async function ask(text, topicId) {
   if (!text || pending) return;
   message(text, "visitor");
   pending = true;
   const bubble = message("Amenos is typing…", "answer");
   guide.classList.add("thinking");
   try {
-    const [answer] = await Promise.all([reply(text),new Promise(done => setTimeout(done,650))]);
+    const [answer] = await Promise.all([topicId === undefined ? reply(text) : replyAbout(topicId),new Promise(done => setTimeout(done,650))]);
     bubble.textContent = answer;
   } catch {
     bubble.textContent = "My search is unavailable. Try an email, project or activity suggestion.";
@@ -174,3 +174,11 @@ function semanticTopic(text) {
   });
 }
 
+
+function replyAbout(id) {
+  if (id === 19) return "Amen is interested in computer vision, robot perception, distributed systems and trustworthy AI. These are research interests. His completed research includes statistical studies of cognition and productivity.";
+  lastTopic=topics[id];
+  const [,target,extra]=lastTopic;
+  const card=target.startsWith("#") ? document.querySelector(target) : projectCards[id];
+  return [...new Set([card?.querySelector("p")?.textContent,extra].filter(Boolean))].join(" ");
+}

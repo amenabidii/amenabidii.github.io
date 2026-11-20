@@ -1,5 +1,7 @@
-import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2/dist/transformers.min.js";
-env.allowLocalModels = false;
+import { pipeline, env } from "./runtime/transformers.min.js";
+env.allowRemoteModels = false;
+env.localModelPath = "/";
+env.backends.onnx.wasm.wasmPaths = new URL("./runtime/", self.location.href).href;
 env.backends.onnx.wasm.numThreads = 1;
 let extractor;
 let questionsIndex;
@@ -7,7 +9,7 @@ const options = {pooling:"mean",normalize:true};
 
 self.onmessage = async ({data}) => {
   try {
-    extractor ??= await pipeline("feature-extraction","Xenova/all-MiniLM-L6-v2");
+    extractor ??= await pipeline("feature-extraction","models");
     questionsIndex ??= (await extractor(data.questions,options)).tolist();
     const [query] = (await extractor(data.text,options)).tolist();
     const ranked = questionsIndex.map((vector,index) => ({
@@ -19,3 +21,4 @@ self.onmessage = async ({data}) => {
     self.postMessage(-1);
   }
 };
+

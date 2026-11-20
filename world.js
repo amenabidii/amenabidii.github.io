@@ -42,17 +42,12 @@ function paint(){
  if(room==="music"&&lightsLow)block(0,0,mapWidth,mapHeight,"#13234244");
  if(room==="music"&&plantWatered){const plant=furniture.music.find(i=>i[0]==="plant");block(plant[1]+8,plant[2],6,4,"#a6f592");}
  ctx.restore();
- // The pocket map marks the player, both exits, and the current camera window.
- if(room!=="music"){block(268,5,79,45,"#08121ce6");
- ctx.strokeStyle="#557480";ctx.strokeRect(270+cameraX*(74/mapWidth),7+cameraY*(40/mapHeight),canvas.width*(74/mapWidth),canvas.height*(40/mapHeight));
- for(const [px] of doorsHere())block(270+px*(74/mapWidth),11,3,3,accent);
- block(270+x*(74/mapWidth),7+y*(40/mapHeight),4,4,"#fff3ba");}
  const item=nearby(),button=document.querySelector("#inspect");
  if(started&&item!==currentItem){
    currentItem=item;
    const atPiano=item?.[0]==="piano";
    if(atPiano!==bachActive){bachActive=atPiano;music();}
-   notifyWorld(item ? (item[0]==="piano"?"♪ G Minor Bach · Piano Tiles 2":(item[5]||item[0])+" nearby") : "");
+   notifyWorld(item ? (item[0]==="piano"?"♪ G Minor Bach · Piano Tiles 2":(item[5]||item[0])+" nearby")+" · Press E to inspect" : "");
  }
  button.hidden=!started||!item;
  button.disabled=!item;
@@ -70,7 +65,7 @@ function tone(freq,duration,volume,type="triangle"){
 function enter(id,back=false){
  if(!back && id!==room)trail.push(room);
  roomAction="";room=id;bachActive=false;currentItem=null;notifyWorld("");visited.add(room); x=backDoorX;y=mapHeight-86;
- canvas.width=room==="music"?mapWidth:352;canvas.height=room==="music"?mapHeight:224;resetTeam();
+ canvas.width=mapWidth;canvas.height=mapHeight;resetTeam();
  if(room==="queue"){checkpoint=45;resetQueue();}
  const [name,note,url]=rooms[room];
  document.querySelector("#room-name").textContent=name;
@@ -143,7 +138,7 @@ function hold(key,dir){
 document.querySelector("#world-start").onclick=()=>{
  started=true;document.querySelector("#world-intro").hidden=true;document.querySelector(".world-panel").hidden=false;
  try{context=new AudioContext();context.resume().catch(()=>{});}catch{}
- enter("music");resizeWorld(true);stage.focus({preventScroll:true});
+ enter("music");notifyWorld("Walk up to an object and press E to inspect it. On touchscreens, tap Inspect.");resizeWorld(true);stage.focus({preventScroll:true});
 };
 stage.onkeydown=e=>{
  if(!document.querySelector("#memory-choice").hidden)return;

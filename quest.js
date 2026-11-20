@@ -8,32 +8,15 @@ const scores={
  music:[490,"sine",[55,62,67,70,0,65,62,0]],
  queue:[175,"triangle",[43,43,0,50,46,0,49,48]]
 };
-// Opening four bars of Luo Ni’s G Minor Bach, played as sixteenth notes.
-// Each eight-note figure repeats over two beats. Bass entries use step offsets.
-const pianoBars=[
- {right:[82,74,72,74,70,74,72,74],bass:{0:55,8:55}},
- {right:[82,75,74,75,72,75,74,75],bass:{0:60,8:60}},
- {right:[81,72,70,72,69,72,70,72],bass:{0:65,4:69,8:65,12:69}},
- {right:[81,74,72,74,70,74,72,74],bass:{0:58,8:58}}
-];
 let bachActive=false;
 function music(){
  clearTimeout(musicTimer);melodyStep=0;
+ syncPiano(bachActive&&!muted&&!document.hidden&&started);
  function next(){
-   if(muted||document.hidden||!started)return;
-   const [pulse,voice,notes]=scores[room];
-   const duration=bachActive?(benchTempo?195:150):pulse;
-   if(bachActive){
-     const step=melodyStep%16;
-     const bar=pianoBars[Math.floor(melodyStep/16)%pianoBars.length];
-     const frequency=midi=>440*2**((midi-69)/12);
-     tone(frequency(bar.right[step%8]),.18,.085,"triangle");
-     if(bar.bass[step])tone(frequency(bar.bass[step]),.48,.075,"sine");
-   }else{
-     const pitch=notes[melodyStep%notes.length];
-     if(pitch)tone(440*2**((pitch-69)/12),duration*.00091,voice==="square"?.014:.045,voice);
-   }
-   melodyStep++;musicTimer=setTimeout(next,duration);
+   if(muted||document.hidden||!started||bachActive)return;
+   const [pulse,voice,notes]=scores[room],pitch=notes[melodyStep%notes.length];
+   if(pitch)tone(440*2**((pitch-69)/12),pulse*.00091,voice==="square"?.014:.045,voice);
+   melodyStep++;musicTimer=setTimeout(next,pulse);
  }
  next();
 }

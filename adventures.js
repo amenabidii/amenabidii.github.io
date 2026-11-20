@@ -12,11 +12,12 @@ const episodes=[
 const storyProgress=new Map(),stampBook=new Set();
 let lightsLow=false,plantWatered=false,benchTempo=false;
 const homeDoors=[
- [48,"Projects","work"],[147,"Research","research"],[245,"P.A.R.","field"],
- [348,"Campus","campus"],[448,"Hackathon","studio"],[552,"Awards","atrium"]
+ [58,"Projects","work"],[180,"Research","research"],
+ [304,"Campus","campus"],[428,"Hackathon","studio"],[550,"Awards","atrium"]
 ];
 function doorsHere(){
  if(room==="music")return homeDoors;
+ if(room==="research")return [[80,"Studio","studio"],[304,"P.A.R.","field"],[528,"Atrium","atrium"]];
  if(room.startsWith("memory"))return [[westDoorX,"Back to topic",honors[Number(room.slice(6))].room],[eastDoorX,"Bedroom","music"]];
  return [[westDoorX,rooms[room][3],rooms[room][4]],[eastDoorX,rooms[room][5],rooms[room][6]]];
 }
@@ -39,9 +40,9 @@ honors.forEach((h,id)=>{
  // The awards gallery also offers a direct portal into every story.
  furniture.atrium.push(portal(id,35+id*80,170+(id%2)*55));
 });
-furniture.music.push(["desk",423,212,76,45,"Writing desk","Browse the project shelf."],["notice",215,83,51,32,"Team photograph","Twelve young researchers in Kasserine, including Dhiya, Ranya and Amen."],["map",288,242,50,30,"Door atlas","North wall, left to right: projects, research, P.A.R., campus, hackathon and awards."]);
+furniture.music.push(["desk",423,212,76,45,"Writing desk","Browse the project shelf."],["notice",215,83,51,32,"Team photograph","Twelve young researchers in Kasserine, including Dhiya, Ranya and Amen."],["map",288,242,50,30,"Door atlas","North wall, left to right: projects, research, campus, hackathon and awards."]);
 rooms.music[0]="Amen’s bedroom";
-rooms.music[1]="Start at the north wall: six doors open into my work, research and community. Inspect the room to find a score, a journal and a team photograph.";
+rooms.music[1]="Start at the north wall: five doors open into my work, research and community. Inspect the room to find a score, a journal and a team photograph.";
 function drawPortal(item){
  const [,px,py,w,h,label,,id]=item,accent=rooms["memory"+id][7];
  block(px-2,py+h-6,w+4,7,"#101e2a");
@@ -54,7 +55,7 @@ const homeHints={
  shelf:"Score shelf · Choose the piano to hear G Minor Bach from Piano Tiles 2.",
  table:"Calendar · I’m seeking a summer 2027 internship in analytics, software or applied research.",
  notice:"Team photograph · Dhiya, Ranya and I were three of 12 P.A.R. researchers in Kasserine.",
- map:"Door atlas · Projects, Research, P.A.R., Campus, Hackathon and Awards run from left to right.",
+ map:"Door atlas · Projects, Research, Campus, Hackathon and Awards run from left to right.",
  desk:"Writing desk · The Projects door leads to the shared computer that inspired Fly-QR."
 };
 function exploreItem(item){
@@ -71,7 +72,7 @@ function exploreItem(item){
  switch(item[0]){
  case "lamp":lightsLow=!lightsLow;notifyWorld(lightsLow?"Reading lamp off · dusk settles over the room.":"Reading lamp on · warm light returns.");break;
  case "plant":plantWatered=true;notifyWorld("Watered the plant. A new leaf unfolds.");break;
- case "bench":benchTempo=!benchTempo;music();notifyWorld(benchTempo?"Practice tempo selected. Approach the piano.":"Performance tempo restored.");break;
+ case "bench":notifyWorld("Piano bench · Walk up to the upright to start the full performance. Use its player controls to pause or change speed.");break;
  case "shelf":notifyWorld(homeHints.shelf+" Journal: "+stampBook.size+"/"+honors.length+" stories.");break;
  case "bed":notifyWorld(homeHints.bed);break;
  case "desk":notifyWorld(homeHints.desk);break;

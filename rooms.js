@@ -34,7 +34,7 @@ const furniture={
   ["tree",232,61,41,54],["tree",286,105,43,58],["bench",212,159,61,23],["plant",34,148,26,33]],
  music:[
   ["bed",17,66,52,74,"Bedside notebook","This imagined bedroom connects Amen’s life on campus with his piano performances."],
-  ["lamp",80,83,21,37],["piano",202,72,101,56,"Play the upright piano","Now playing: the opening of Luo Ni’s G Minor Bach from Piano Tiles 2. Amen performs with AUC Musicana."],
+  ["lamp",80,83,21,37],["piano",202,72,101,56,"Play the upright piano","Now playing: the full performance of Luo Ni’s G Minor Bach from Piano Tiles 2. Amen performs with AUC Musicana."],
   ["bench",225,140,51,21],["shelf",93,57,60,39],["plant",305,150,24,37],["table",38,158,48,23]]
 };
 furniture.queue=[

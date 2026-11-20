@@ -73,3 +73,4 @@ header nav{flex-wrap:wrap}
 #handoff input,#handoff textarea,#language{max-width:100%;color:#e8f7f6;background:#09151e;border:1px solid #55717d;border-radius:4px;padding:.4rem}
 #handoff input,#handoff textarea{display:block;width:100%}
 #handoff p{font-size:.88rem}#handoff button,#conversation button{padding:.4rem .6rem}
+.chat-choices{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}.chat-choices button{font-size:.85rem}

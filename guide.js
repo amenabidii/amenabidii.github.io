@@ -84,6 +84,7 @@ const launcher = document.querySelector("#ask-amen");
 launcher.onclick = () => {
   if (guide.open) return guide.close();
   guide.show();
+  suggestQuestions();
   warmSearch();
   launcher.setAttribute("aria-expanded", "true");
   question.focus({preventScroll:true});
@@ -97,11 +98,20 @@ form.onsubmit = event => {
   ask(question.value.trim());
   question.value = "";
 };
-document.querySelector("#prompts").onclick = event => {
-  if (event.target.matches("button")) ask(event.target.textContent);
-};
-
-
+function suggestQuestions() {
+  if (conversation.querySelector(".chat-choices")) return;
+  const intro=message("Want a starting point? Pick a question or write your own.", "answer");
+  const choices=document.createElement("span");
+  choices.className="chat-choices";
+  for(const title of ["Why did Amen create Fly-QR?", "What does Amen do now?", "Which skills does Amen use?", "Tell me about the climate petition"]) {
+    const button=document.createElement("button");
+    button.type="button";
+    button.textContent=title;
+    button.onclick=()=>ask(title);
+    choices.append(button);
+  }
+  intro.append(choices);
+}
 // Keep inference off the page thread. Exact questions stay available offline.
 let searchWorker;
 const topicQuestions = [
@@ -204,6 +214,8 @@ async function localizedReply(text,topicId) {
   const missing=()=>{offerReferral=true;return opener+escalate[col+1];};
   if(topicId===undefined && /salary|budget|how much|combien coûte|salaire|prix|قداش يكلّف|مرتب|بكام|تكلفة|funding|revenue|daily users|personal phone/i.test(text)) return missing();
   if(topicId===undefined && /recipe|weather|politics|stock price|طقس|ماتش|météo|recette/i.test(text)) return ["I cover Amen’s portfolio. Try a project, his studies or his music.","Je réponds sur le parcours d’Amen. Demande-moi un projet ou ses études.","Nahki 3la parcours mta3 Amen. Es2elni 3al 9raya walla projet.","نحكي على مسيرة آمن. اسألني على القراية وإلا مشروع.","أنا هنا عشان أحكي عن آمن. اسألني عن دراسته أو مشاريعه."][col+1];
+  const origin = projectOrigin(text,col);
+  if(origin) return opener+origin;
   if(col<0){
     if(topicId===19 || /research interests|robot perception|interested in/i.test(text)) return replyAbout(19);
     const answer=topicId===undefined ? await reply(text) : replyAbout(topicId);
@@ -234,9 +246,51 @@ function appendDraftButton(bubble,text){
   bubble.append(document.createElement("br"),button);
 }
 document.querySelector("#discard").onclick=()=>{handoff.reset();handoff.hidden=true;};
-handoff.onsubmit=event=>{
+handoff.onsubmit=async event=>{
   event.preventDefault();
-  if(!handoff.reportValidity()) return;
-  const body=handoff.elements.message.value.trim()+"\n\nReply to: "+handoff.elements.email.value.trim();
-  location.href="mailto:amenabidii@aucegypt.edu?subject=Amenos%20portfolio%20question&body="+encodeURIComponent(body);
+  if(handoff.dataset.sending || !handoff.reportValidity()) return;
+  const email=handoff.elements.email.value.trim();
+  const question=handoff.elements.message.value.trim();
+  const status=document.querySelector("#send-status");
+  if(!question){status.textContent="Please enter a question.";return;}
+  handoff.dataset.sending="true";
+  const fields=[...handoff.querySelectorAll("button,input,textarea")];
+  fields.forEach(field=>field.disabled=true);
+  status.textContent="Sending…";
+  try {
+    const response=await fetch("https://formsubmit.co/ajax/amenabidii@aucegypt.edu",{
+      method:"POST",headers:{"Content-Type":"application/json",Accept:"application/json"},
+      body:JSON.stringify({email,message:question,_subject:"Amenos · Visitor question"}),
+      signal:AbortSignal.timeout(20000)
+    });
+    const receipt=await response.json();
+    if(!response.ok || String(receipt.success)!=="true") throw new Error("Submission unavailable");
+    handoff.reset();
+    handoff.hidden=true;
+    message("The email service accepted your question for Amen.","answer");
+    status.textContent="";
+  } catch {
+    status.textContent="Delivery could not be confirmed. Your draft is saved here while this page is open.";
+  } finally {
+    delete handoff.dataset.sending;
+    fields.forEach(field=>field.disabled=false);
+  }
 };
+function projectOrigin(text,col) {
+  if(!/why|motivat|inspir|reason|pourquoi|3lech|3lech|علاش|ليه|سبب/i.test(text)) return "";
+  if(/fly[\s‐‑–-]*qr/i.test(text) || (lastTopic===topics[0] && /^(why|pourquoi|علاش|ليه)[ ؟?!.]*$/i.test(text))){
+    lastTopic=topics[0];
+    return [
+      "Fly-QR started with a printing problem. At a university library or printing centre, getting a file from a phone to a shared computer could mean signing into a personal messaging account. Amen built a temporary QR-linked room so you can send the file, print it and end the session without that login.",
+      "Au départ, il voulait simplement imprimer un fichier. À la bibliothèque, transférer un document du téléphone vers un ordinateur partagé pouvait demander une connexion à sa messagerie personnelle. Il a donc créé une salle temporaire accessible par QR code.",
+      "El fekra jet mel impression fel bibliothèque. Bech yhez fichier mel téléphone lel PC elli yesta3mlouh ennes lkol, ken يلزمو y7ell compte personnel. 3mal Fly-QR bech yscan(i) code, yab3ath el fichier w ysakker el session.",
+      "الحكاية بدات في الطباعة في المكتبة. باش يعدّي ملف من التليفون للـPC المشترك، كان يلزمو يحلّ حساب الميساجات متاعو. عمل Fly-QR باش يسكانّي كود ويعدّي الملف ويسكّر الجلسة.",
+      "الفكرة بدأت من الطباعة في المكتبة. عشان ينقل ملف من الموبايل لكمبيوتر مشترك، كان ممكن يضطر يفتح حساب الرسايل الشخصي. عمل Fly-QR عشان يمسح كود ويبعت الملف ويقفل الجلسة."
+    ][col+1];
+  }
+  if(/lapwise|study room|mix blocker/i.test(text) && col<0){
+    const id=/lapwise/i.test(text)?2:/study room/i.test(text)?6:3;
+    return replyAbout(id);
+  }
+  return "";
+}

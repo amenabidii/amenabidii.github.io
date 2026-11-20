@@ -55,7 +55,7 @@ async function ask(text) {
   if (!text || pending) return;
   message(text, "visitor");
   pending = true;
-  const bubble = message("Little Amen is typing…", "answer");
+  const bubble = message("Amenos is typing…", "answer");
   guide.classList.add("thinking");
   try {
     const answer = await reply(text);

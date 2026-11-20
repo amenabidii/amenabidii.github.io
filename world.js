@@ -13,7 +13,7 @@ const ctx=canvas.getContext("2d");
 const stage=canvas.parentElement;
 const hero=new Image();
 hero.src="little-amen.svg";
-let room="atrium", x=5,y=5,started=false,muted=false,context,musicTimer,melodyStep=0;
+let room="atrium", x=176,y=174,started=false,muted=false,context,musicTimer,melodyStep=0;
 const visited=new Set();
 const trail=[];
 const walls={
@@ -50,8 +50,8 @@ function paint(){
  door(2,rooms[room][3],accent);door(8,rooms[room][5],accent);
  for(const [col,row] of walls[room])prop(col*32,row*32,accent);
  if(trail.length){block(5*32+2,194,28,25,"#081722");ctx.fillStyle=accent;ctx.font="bold 10px monospace";ctx.textAlign="center";ctx.fillText("BACK",176,211);}
- block(x*32+7,y*32+25,19,4,"#152932");
- if(hero.complete&&hero.naturalWidth)ctx.drawImage(hero,x*32+3,y*32-4,26,32);
+ block(x-9,y-2,19,4,"#152932");
+ if(hero.complete&&hero.naturalWidth)ctx.drawImage(hero,Math.round(x)-13,Math.round(y)-30-Math.round(Math.abs(Math.sin(stride/6))*2),26,32);
 }
 hero.onload=paint;
 function tone(freq,duration,volume,type="triangle"){
@@ -71,7 +71,7 @@ function music(){
 }
 function enter(id,back=false){
  if(!back && id!==room)trail.push(room);
- room=id; visited.add(room); x=5;y=5;
+ room=id; visited.add(room); x=176;y=174;
  const [name,note,url]=rooms[room];
  document.querySelector("#room-name").textContent=name;
  document.querySelector("#room-note").textContent=note;
@@ -80,13 +80,39 @@ function enter(id,back=false){
  document.querySelector("#world-count").textContent=visited.size===7?"JOURNAL COMPLETE":visited.size+" / 7 ROOMS";
  tone(523,.22,.09);paint();
 }
-const vectors={left:[-1,0],up:[0,-1],down:[0,1],right:[1,0]};
-function move(dir){
- const [dx,dy]=vectors[dir],nx=x+dx,ny=y+dy;
- if(ny===1&&(nx===2||nx===8)){enter(rooms[room][nx===2?4:6]);return;}
- if(nx===5&&ny===6&&trail.length){enter(trail.pop(),true);return;}
- if(nx<1||nx>9||ny<1||ny>5||walls[room].some(([a,b])=>a===nx&&b===ny))return;
- x=nx;y=ny;tone(90+(x+y)*4,.055,.025);paint();
+const directions={ArrowUp:"up",w:"up",ArrowLeft:"left",a:"left",ArrowDown:"down",s:"down",ArrowRight:"right",d:"right"};
+const held=new Map();
+let frame=0,previous=0,stride=0;
+function clearMovement(){held.clear();cancelAnimationFrame(frame);frame=0;previous=0;paint();}
+function canStand(px,py){
+ return px>=17 && px<=335 && py>=44 && py<=207 &&
+ !walls[room].some(([a,b])=>px>a*32-5&&px<a*32+35&&py>b*32+8&&py<b*32+32);
+}
+function advance(dx,dy){
+ if(canStand(x+dx,y))x+=dx;
+ if(canStand(x,y+dy))y+=dy;
+ if(y<=49&&(Math.abs(x-80)<14||Math.abs(x-272)<14)){enter(rooms[room][x<176?4:6]);clearMovement();return;}
+ if(trail.length&&y>=200&&Math.abs(x-176)<15){enter(trail.pop(),true);clearMovement();}
+}
+function walk(now){
+ const dt=previous?Math.min((now-previous)/1000,.04):1/60;
+ previous=now;
+ const active=new Set(held.values());
+ const dx=Number(active.has("right"))-Number(active.has("left"));
+ const dy=Number(active.has("down"))-Number(active.has("up"));
+ const length=Math.hypot(dx,dy);
+ if(length){
+   const ox=x,oy=y;
+   advance(dx/length*98*dt,dy/length*98*dt);
+   if(held.size)stride+=Math.hypot(x-ox,y-oy);
+   paint();
+ }
+ if(held.size)frame=requestAnimationFrame(walk);
+ else {frame=0;previous=0;}
+}
+function hold(key,dir){
+ held.set(key,dir);
+ if(!frame)frame=requestAnimationFrame(walk);
 }
 document.querySelector("#world-start").onclick=()=>{
  started=true;document.querySelector("#world-intro").hidden=true;document.querySelector(".world-panel").hidden=false;
@@ -94,10 +120,18 @@ document.querySelector("#world-start").onclick=()=>{
  enter("atrium");music();stage.focus({preventScroll:true});
 };
 stage.onkeydown=e=>{
- const dir=({ArrowUp:"up",w:"up",ArrowLeft:"left",a:"left",ArrowDown:"down",s:"down",ArrowRight:"right",d:"right"})[e.key];
- if(started&&dir){e.preventDefault();move(dir);}
+ const dir=directions[e.key]||directions[e.key.toLowerCase()];
+ if(started&&dir){e.preventDefault();hold(e.code,dir);}
 };
-document.querySelectorAll("[data-dir]").forEach(b=>b.onclick=()=>move(b.dataset.dir));
+window.addEventListener("keyup",e=>held.delete(e.code));
+stage.addEventListener("blur",clearMovement);
+window.addEventListener("blur",clearMovement);
+document.addEventListener("visibilitychange",()=>{if(document.hidden)clearMovement();});
+document.querySelectorAll("[data-dir]").forEach(button=>{
+ button.onpointerdown=e=>{e.preventDefault();button.setPointerCapture(e.pointerId);hold(e.pointerId,button.dataset.dir);};
+ button.onlostpointercapture=e=>held.delete(e.pointerId);
+ button.onclick=e=>{if(e.detail===0){hold("tap",button.dataset.dir);setTimeout(()=>held.delete("tap"),100);}};
+});
 document.querySelector("#world-mute").onclick=e=>{
  muted=!muted;e.currentTarget.setAttribute("aria-pressed",String(muted));e.currentTarget.textContent=muted?"Enable audio":"Mute audio";
  if(context){(muted?context.suspend():context.resume()).catch(()=>{});}music();

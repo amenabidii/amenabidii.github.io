@@ -14,7 +14,7 @@ const topics = [
   [/soutra|reproductive/i,"SOUTRA"],
   [/climate|activis|petition|unicef/i,"#activism","In Kasserine, we also facilitated climate and renewable-energy workshops using participatory tools. I helped plan advocacy campaigns with local authorities."],
   [/accessib|disabilit|election/i,"#access","The Humanity & Inclusion assessment covered at least eight public and private facilities. The election observations were a separate activity."],
-  [/mentor|orientation|campus|education|scholar|studying/i,"#campus","I expect to graduate in December 2028. My coursework includes statistical inference, applied probability and machine learning."],
+  [/mentor|orientation|campus|education|scholar|studying/i,"#campus","I study Data Science at the American University in Cairo, with minors in Computer Science and Business Administration. I expect to graduate in December 2028. My coursework includes statistical inference, applied probability and machine learning."],
   [/piano|pianist|music|stage/i,"#piano"],
   [/e-?mail|contact|reach (you|him|amen)|get in touch/i,"#contact","Email Amen at amenabidii@aucegypt.edu."],
   [/currently|right now|doing now|do now|these days|at the moment/i,"#campus","Amen studies Data Science at the American University in Cairo, with minors in Computer Science and Business Administration. He is seeking a summer 2027 internship."],
@@ -129,3 +129,4 @@ function semanticTopic(text) {
     searchWorker.postMessage({text, questions:topicQuestions});
   });
 }
+

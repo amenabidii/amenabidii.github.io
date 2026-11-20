@@ -11,7 +11,7 @@ function drawSignal() {
   for (let row = 0; row < 74; row++) {
     const depth = row / 73;
     context.beginPath();
-    context.strokeStyle = "hsl(" + (22 - 15 * depth) + " 94% " + (78 - 17 * depth) + "%)";
+    context.strokeStyle = "hsl(" + (174 + 49 * depth) + " 94% " + (78 - 17 * depth) + "%)";
     for (let sample = 0; sample <= 210; sample++) {
       const u = sample / 210;
       const envelope = Math.sin(Math.PI * u) ** 1.5;
@@ -35,3 +35,4 @@ canvas.addEventListener("pointermove", event => {
   drawSignal();
 });
 drawSignal();
+

@@ -46,7 +46,19 @@
   </div>
 </section>
 <section id="contact"><small>CONTACT</small><h2>Let’s talk<span>.</span></h2><p>I’m seeking a summer 2027 internship in software development, data analytics or applied technology research.</p><a class="mail" href="mailto:amenabidii@aucegypt.edu">amenabidii@aucegypt.edu</a></section></main>
-<footer><b>Mohamed Amen Allah Abidi</b><a href="https://github.com/amenabidii">GitHub</a><a href="https://eg.linkedin.com/in/amenabidii">LinkedIn</a><a href="resume.pdf" download>Download résumé</a></footer><script defer src="signal.js"></script><script defer src="story.js"></script></body></html>
+<footer><b>Mohamed Amen Allah Abidi</b><a href="https://github.com/amenabidii">GitHub</a><a href="https://eg.linkedin.com/in/amenabidii">LinkedIn</a><a href="resume.pdf" download>Download résumé</a></footer><script defer src="signal.js"></script><script defer src="story.js"></script><button id="ask-amen" type="button" aria-haspopup="dialog">Ask little Amen</button>
+<dialog id="guide" aria-labelledby="guide-title">
+  <div class="guide-head">
+    <div class="mascot" aria-hidden="true"><span class="legs"></span><span class="jumper"></span><span class="face"></span><span class="arm"></span><span class="keys"></span></div>
+    <div><small>PORTFOLIO GUIDE</small><h3 id="guide-title">Little Amen</h3></div>
+    <button id="close-guide" type="button" aria-label="Close portfolio guide">×</button>
+  </div>
+  <div id="conversation" role="log" aria-label="Conversation" aria-live="polite"><p>Pull up a chair. Ask me about a project, my fieldwork in Tunisia, or what I play on stage.</p></div>
+  <div id="prompts" aria-label="Suggested questions"><button>Why Lapwise?</button><button>Climate activism?</button><button>Any music stories?</button></div>
+  <form id="ask-form"><label for="question">Ask about Amen’s portfolio</label><div><input id="question" maxlength="240" required autocomplete="off" placeholder="How does FlyQR work?"><button>Send</button></div></form>
+</dialog>
+<script src="guide.js" defer></script></body></html>
+
 
 
 

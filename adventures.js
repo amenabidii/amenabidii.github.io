@@ -64,7 +64,7 @@ function exploreItem(item){
    if(item!==items[0]&&item!==items[1])return false;
    if(item===items[1]&&step===0){notifyWorld("First find "+items[0][5]+".");return true;}
    if(item===items[0]){storyProgress.set(id,Math.max(step,1));notifyWorld(item[6]+" Next: "+items[1][5]+".");}
-   else{storyProgress.set(id,2);stampBook.add(id);notifyWorld(honors[id].body+" · Journal "+stampBook.size+"/"+honors.length);tone(659,.3,.08);}
+   else finishMemory(id);
    return true;
  }
  if(room!=="music")return false;
@@ -112,3 +112,32 @@ function drawTeam(){
  }
 }
 function joinTask(item){if(teamRoster().length)teamTask=[item[1]+item[3]/2,item[2]+item[4]+10];}
+const memoryChoices=[
+ ["Pack for the scholarship move. Which campus belongs on the travel card?",["Cairo · AUC","Tunis · INSAT"],0,"The scholarship took Amen to the American University in Cairo."],
+ ["Your team finds a claim with no source. What should VeriNews show?",["A verified badge","A request for evidence"],1,"A claim needs supporting evidence before a fact-check can move forward."],
+ ["Which result belongs on the regional computer science leaderboard?",["First place","Thirtieth place"],0,"First regionally and thirtieth nationally are two different achievements."],
+ ["The team has listened to young residents. How should the findings travel next?",["Publish their private notes","Bring shared priorities to local authorities"],1,"Use the shared priorities to build the climate petition together."],
+ ["A new student is lost on orientation day. What can the welcome group offer?",["A guided route to campus resources","The next exam ranking"],0,"The peer moderators helped students find resources and settle into AUC."],
+ ["A virtual EGP 250,000 portfolio gains 22%. What is its closing value?",["EGP 272,000","EGP 305,000"],1,"EGP 250,000 × 1.22 = EGP 305,000 in the simulation."],
+ ["The final campus performance is starting. Where does Amen take his place?",["At the piano","At the drum kit"],0,"Amen plays piano with AUC Musicana."]
+];
+function finishMemory(id){
+ if(stampBook.has(id)){notifyWorld(honors[id].body);return;}
+ clearMovement();
+ const panel=document.querySelector("#memory-choice"),[prompt,options,correct,hint]=memoryChoices[id];
+ panel.replaceChildren();panel.hidden=false;
+ const title=document.createElement("strong");title.textContent=prompt;panel.append(title);
+ const feedback=document.createElement("p");feedback.setAttribute("role","status");
+ for(const [i,value] of options.entries()){
+  const button=document.createElement("button");button.textContent=value;
+  button.onclick=()=>{
+   if(i!==correct){feedback.textContent=hint;return;}
+   stampBook.add(id);storyProgress.set(id,2);panel.hidden=true;
+   if(id===6)[392,466,587].forEach((pitch,j)=>setTimeout(()=>tone(pitch,.3,.07),j*130));
+   else tone(659,.3,.08);
+   paint();notifyWorld(honors[id].body+" · Journal "+stampBook.size+"/"+honors.length);
+   stage.focus({preventScroll:true});
+  };panel.append(button);
+ }
+ const leave=document.createElement("button");leave.textContent="Return to room";leave.onclick=()=>{panel.hidden=true;stage.focus({preventScroll:true});};panel.append(feedback,leave);panel.querySelector("button").focus();
+}

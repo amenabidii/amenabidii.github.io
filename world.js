@@ -136,6 +136,7 @@ function walk(now){
  else {frame=0;previous=0;}
 }
 function hold(key,dir){
+ if(!document.querySelector("#memory-choice").hidden)return;
  held.set(key,dir);
  if(!frame)frame=requestAnimationFrame(walk);
 }
@@ -145,6 +146,7 @@ document.querySelector("#world-start").onclick=()=>{
  enter("music");resizeWorld(true);stage.focus({preventScroll:true});
 };
 stage.onkeydown=e=>{
+ if(!document.querySelector("#memory-choice").hidden)return;
  if(started&&e.key.toLowerCase()==="e"){e.preventDefault();if(!e.repeat)inspect();return;}
  const dir=directions[e.key]||directions[e.key.toLowerCase()];
  if(started&&dir){e.preventDefault();hold(e.code,dir);}
@@ -175,7 +177,7 @@ document.addEventListener("pointermove",event=>{
 },{passive:true});
 
 canvas.onpointerdown=e=>{
- if(!started||stick)return;
+ if(!started||stick||!document.querySelector("#memory-choice").hidden)return;
  stage.focus({preventScroll:true});
  canvas.setPointerCapture(e.pointerId);
  stick={id:e.pointerId,startX:e.clientX,startY:e.clientY,dx:0,dy:0};

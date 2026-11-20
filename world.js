@@ -73,7 +73,8 @@ function enter(id,back=false){
 const directions={ArrowUp:"up",w:"up",ArrowLeft:"left",a:"left",ArrowDown:"down",s:"down",ArrowRight:"right",d:"right"};
 const held=new Map();
 let frame=0,previous=0,stride=0;
-function clearMovement(){held.clear();cancelAnimationFrame(frame);frame=0;previous=0;paint();}
+let stick=null;
+function clearMovement(){stick=null;held.clear();cancelAnimationFrame(frame);frame=0;previous=0;paint();}
 function nearby(){
  let closest=null,best=23;
  for(const item of furniture[room]){
@@ -106,16 +107,16 @@ function walk(now){
  const dt=previous?Math.min((now-previous)/1000,.04):1/60;
  previous=now;
  const active=new Set(held.values());
- const dx=Number(active.has("right"))-Number(active.has("left"));
- const dy=Number(active.has("down"))-Number(active.has("up"));
+ const dx=stick?.dx || Number(active.has("right"))-Number(active.has("left"));
+ const dy=stick?.dy || Number(active.has("down"))-Number(active.has("up"));
  const length=Math.hypot(dx,dy);
  if(length){
    const ox=x,oy=y;
    advance(dx/length*98*dt,dy/length*98*dt);
-   if(held.size)stride+=Math.hypot(x-ox,y-oy);
+   if(held.size||stick)stride+=Math.hypot(x-ox,y-oy);
    paint();
  }
- if(held.size)frame=requestAnimationFrame(walk);
+ if(held.size||stick)frame=requestAnimationFrame(walk);
  else {frame=0;previous=0;}
 }
 function hold(key,dir){
@@ -153,3 +154,19 @@ document.addEventListener("pointermove",event=>{
  document.body.style.setProperty("--mx",event.clientX+"px");
  document.body.style.setProperty("--my",event.clientY+"px");
 },{passive:true});
+
+canvas.onpointerdown=e=>{
+ if(!started||stick)return;
+ stage.focus({preventScroll:true});
+ canvas.setPointerCapture(e.pointerId);
+ stick={id:e.pointerId,startX:e.clientX,startY:e.clientY,dx:0,dy:0};
+ if(!frame)frame=requestAnimationFrame(walk);
+};
+canvas.onpointermove=e=>{
+ if(stick?.id!==e.pointerId)return;
+ const dx=e.clientX-stick.startX,dy=e.clientY-stick.startY;
+ const length=Math.hypot(dx,dy);
+ stick.dx=length>4?dx/length:0;
+ stick.dy=length>4?dy/length:0;
+};
+canvas.onlostpointercapture=e=>{if(stick?.id===e.pointerId)stick=null;};

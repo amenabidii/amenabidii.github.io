@@ -8,17 +8,31 @@ const scores={
  music:[490,"sine",[55,62,67,70,0,65,62,0]],
  queue:[175,"triangle",[43,43,0,50,46,0,49,48]]
 };
-// The opening of Bach's Little Fugue in G minor, BWV 578, in eighth-note units.
-const bachSubject=[[67,2],[74,2],[70,3],[69,1],[67,1],[70,1],[69,1],[67,1],[66,1],[69,1],[62,2],[67,1],[62,1],[69,1],[62,1],[70,1],[69,.5],[67,.5],[69,1],[62,1]];
+// Opening four bars of Luo Ni’s G Minor Bach, played as sixteenth notes.
+// Each eight-note figure repeats over two beats. Bass entries use step offsets.
+const pianoBars=[
+ {right:[82,74,72,74,70,74,72,74],bass:{0:55,8:55}},
+ {right:[82,75,74,75,72,75,74,75],bass:{0:60,8:60}},
+ {right:[81,72,70,72,69,72,70,72],bass:{0:65,4:69,8:65,12:69}},
+ {right:[81,74,72,74,70,74,72,74],bass:{0:58,8:58}}
+];
 let bachActive=false;
 function music(){
  clearTimeout(musicTimer);melodyStep=0;
  function next(){
    if(muted||document.hidden||!started)return;
    const [pulse,voice,notes]=scores[room];
-   const [pitch,beats]=bachActive?bachSubject[melodyStep%bachSubject.length]:[notes[melodyStep%notes.length],1];
-   const duration=beats*(bachActive?240:pulse);
-   if(pitch)tone(440*2**((pitch-69)/12),duration*.00091,voice==="square"?.014:.045,bachActive?"triangle":voice);
+   const duration=bachActive?150:pulse;
+   if(bachActive){
+     const step=melodyStep%16;
+     const bar=pianoBars[Math.floor(melodyStep/16)%pianoBars.length];
+     const frequency=midi=>440*2**((midi-69)/12);
+     tone(frequency(bar.right[step%8]),.18,.085,"triangle");
+     if(bar.bass[step])tone(frequency(bar.bass[step]),.48,.075,"sine");
+   }else{
+     const pitch=notes[melodyStep%notes.length];
+     if(pitch)tone(440*2**((pitch-69)/12),duration*.00091,voice==="square"?.014:.045,voice);
+   }
    melodyStep++;musicTimer=setTimeout(next,duration);
  }
  next();

@@ -7,7 +7,7 @@ const rooms = {
  research:["Research lab","A team led by Amen explored sleep, stress, memory and reaction time across 80,000 records.","#project-5","Studio","studio","Atrium","atrium","#baacff"],
  studio:["Night-shift code lab","Turn back the clock in The Observer Paradox and the observer still remembers. Try that mechanic in the project gallery.","#project-4","Workshop","work","Hiring","queue","#ec98ad"],
  field:["Kasserine field station","More than 240 young people contributed to climate research. Amen co-led a petition that gathered over 400 signatures.","#activism","Music","music","Atrium","atrium","#a7e8a4"],
- music:["Bedroom & piano","Amen played piano at more than 15 university events with AUC Musicana. Approach the upright piano to hear Bach.","#piano","Fieldwork","field","Campus","campus","#ffb1a0"]
+ music:["Bedroom & piano","Amen played piano at more than 15 university events with AUC Musicana. Approach the upright piano to hear G Minor Bach from Piano Tiles 2.","#piano","Fieldwork","field","Campus","campus","#ffb1a0"]
 };
 const canvas=document.querySelector("#world-canvas");
 const ctx=canvas.getContext("2d");
@@ -59,7 +59,7 @@ function paint(){
    currentItem=item;
    const atPiano=item?.[0]==="piano";
    if(atPiano!==bachActive){bachActive=atPiano;music();}
-   notifyWorld(item ? (item[0]==="piano"?"♪ Bach · Little Fugue in G minor":(item[5]||item[0])+" nearby") : "");
+   notifyWorld(item ? (item[0]==="piano"?"♪ G Minor Bach · Piano Tiles 2":(item[5]||item[0])+" nearby") : "");
  }
  button.hidden=!started||!item;
  button.disabled=!item;

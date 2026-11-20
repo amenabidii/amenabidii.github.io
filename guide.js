@@ -27,9 +27,18 @@ const outside = "That’s outside my portfolio notes. Try a question about my pr
 let lastTopic;
 let pending;
 async function reply(text) {
+  if (/^(hey|hi|hello|salaam)[!. ]*$/i.test(text)) return "Hi, I’m Amenos. Ask me about Amen’s projects, studies, music or fieldwork.";
+  if (/recipe|weather|politics|stock price/i.test(text)) return outside;
   const followUp = /^(tell me more|more|what else|go on)[?.! ]*$/i.test(text);
   let topic = followUp ? lastTopic : topics.find(([pattern]) => pattern.test(text));
-  if (!topic && !followUp) topic = await semanticTopic(text);
+  if (!topic && !followUp) {
+    topic = quickMatch(text);
+    if (!topic) {
+      warmSearch();
+      if (!modelReady) return "Which part of Amen’s portfolio do you mean? Try a project name, his degree, skills, music or community work.";
+      topic = await semanticTopic(text);
+    }
+  }
   if (!topic || /ignore .*instructions|write (a|me)|recipe|weather|politics|stock price/i.test(text)) {
     lastTopic = null;
     return outside;
@@ -72,6 +81,7 @@ const launcher = document.querySelector("#ask-amen");
 launcher.onclick = () => {
   if (guide.open) return guide.close();
   guide.show();
+  warmSearch();
   launcher.setAttribute("aria-expanded", "true");
   question.focus({preventScroll:true});
 };
@@ -112,21 +122,54 @@ const topicQuestions = [
   "Which software projects has he made?",
   "What does he do outside of classes?"
 ];
-function semanticTopic(text) {
-  return new Promise((resolve,reject) => {
-    searchWorker ??= new Worker("semantic-worker.js",{type:"module"});
-    const timeout = setTimeout(() => finish(-1), 45000);
-    function finish(index) {
-      clearTimeout(timeout);
-      if (index === -1) {
-        searchWorker.terminate();
-        searchWorker = null;
-        reject(new Error("Semantic search unavailable"));
-      } else resolve(topics[index]);
+// A lightweight weighted index handles paraphrases even before the model loads.
+const stopWords = new Set("how can i a an the of to for in my your at from and or his he she him you me do does did do what which when where who are is am on it with has have amen about tell during that these".split(" "));
+function words(text) {
+  return new Set((text.toLowerCase().match(/[a-z0-9]+/g) || []).filter(word => !stopWords.has(word)));
+}
+const examples = [
+  "transfer files devices sending documents sharing", "startup validate idea business founders",
+  "timers task tracking laps productivity tracker", "browser extension playlist video",
+  "fiction story game undo simulation", "memory sleep stress dataset",
+  "reserve rooms reservation library booking", "screen habits productivity analysis",
+  "health platform reproductive Tunisia", "climate petition advocacy environment",
+  "accessibility disability barriers voters", "degree university college major graduation studying studies school education",
+  "instrument performances pianist concert stage music", "email address contact reach message",
+  "currently today doing now lately present occupation", "languages tools programming skills stack coding",
+  "job internship employment summer hiring", "projects apps software builds", "extracurricular volunteering hobbies free time"
+];
+const quickIndex = topicQuestions.map((question,i) => words(question+" "+examples[i]));
+function quickMatch(text) {
+  const terms = words(text);
+  const scores = quickIndex.map((entry,index) => {
+    let score = 0;
+    for (const term of terms) {
+      if (entry.has(term)) score += Math.log((quickIndex.length+1) / quickIndex.filter(row => row.has(term)).length);
     }
-    searchWorker.onmessage = event => finish(event.data);
-    searchWorker.onerror = () => finish(-1);
-    searchWorker.postMessage({text, questions:topicQuestions});
+    return {index,score};
+  }).sort((a,b) => b.score-a.score);
+  const [best,next] = scores;
+  return best.score >= 2.9 && best.score-next.score >= 1 ? topics[best.index] : undefined;
+}
+let modelReady = false;
+function warmSearch() {
+  if (searchWorker) return;
+  try {
+    searchWorker = new Worker("semantic-worker.js",{type:"module"});
+    searchWorker.onmessage = event => { modelReady = event.data === "ready"; };
+    searchWorker.onerror = () => { modelReady = false; };
+    searchWorker.postMessage({questions:topicQuestions});
+  } catch { modelReady = false; }
+}
+function semanticTopic(text) {
+  return new Promise(resolve => {
+    const timeout = setTimeout(() => {
+      modelReady = false;
+      searchWorker.terminate();
+      searchWorker = null;
+      resolve(undefined);
+    },1500);
+    searchWorker.onmessage = event => { clearTimeout(timeout); resolve(topics[event.data]); };
+    searchWorker.postMessage({text});
   });
 }
-

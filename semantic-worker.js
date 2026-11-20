@@ -9,8 +9,12 @@ const options = {pooling:"mean",normalize:true};
 
 self.onmessage = async ({data}) => {
   try {
-    extractor ??= await pipeline("feature-extraction","models");
-    questionsIndex ??= (await extractor(data.questions,options)).tolist();
+    if (data.questions) {
+      extractor ??= await pipeline("feature-extraction","models");
+      questionsIndex ??= (await extractor(data.questions,options)).tolist();
+      self.postMessage("ready");
+      return;
+    }
     const [query] = (await extractor(data.text,options)).tolist();
     const ranked = questionsIndex.map((vector,index) => ({
       index, score:vector.reduce((sum,value,i) => sum + value * query[i],0)

@@ -24,7 +24,7 @@ function showInquiry(kind,project=""){
   const terms=document.createElement("p");terms.textContent="Contact me for the rollout plan and to discuss a potential share of future earnings if the project succeeds. Any revenue share depends on a separate agreement and actual revenue.";
   box.append(note,table,limits,terms);
  }
- inquiry.showModal();
+ inquiry.showModal();inquiry.querySelector(".inquiry-scroll").scrollTop=0;
 }
 document.querySelectorAll("[data-inquiry]").forEach(b=>b.onclick=()=>showInquiry(b.dataset.inquiry));
 for(const [name,plan] of Object.entries(pilots)){
@@ -45,3 +45,11 @@ inquiryForm.onsubmit=async e=>{
  }catch{status.textContent="Delivery could not be confirmed. Your details are still here. You can also contact Amen at the email below.";}
  finally{delete inquiry.dataset.busy;controls.forEach(c=>c.disabled=false);}
 };
+
+let pressedOutside=false;
+function outsidePanel(e){
+ const r=inquiry.getBoundingClientRect();
+ return e.target===inquiry&&(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom);
+}
+inquiry.addEventListener("pointerdown",e=>{pressedOutside=outsidePanel(e);});
+inquiry.addEventListener("click",e=>{if(pressedOutside&&outsidePanel(e)&&!inquiry.dataset.busy)inquiry.close();pressedOutside=false;});

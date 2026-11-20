@@ -68,7 +68,7 @@ async function ask(text, topicId) {
   const bubble = message("Amenos is typing…", "answer");
   guide.classList.add("thinking");
   try {
-    const [answer] = await Promise.all([localizedReply(text,topicId),new Promise(done => setTimeout(done,650))]);
+    const [answer] = await Promise.all([localizedReply(text,topicId),new Promise(done => setTimeout(done,1250))]);
     bubble.dir="auto";
     bubble.textContent = answer;
     if (offerReferral) appendDraftButton(bubble,text);
@@ -103,7 +103,7 @@ function suggestQuestions() {
   const intro=message("Want a starting point? Pick a question or write your own.", "answer");
   const choices=document.createElement("span");
   choices.className="chat-choices";
-  for(const title of ["Why did Amen create Fly-QR?", "What does Amen do now?", "Which skills does Amen use?", "Tell me about the climate petition"]) {
+  for(const title of ["Projects", "Education", "Technical skills", "Community activities"]) {
     const button=document.createElement("button");
     button.type="button";
     button.textContent=title;

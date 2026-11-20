@@ -81,3 +81,9 @@ header nav{flex-wrap:wrap}
 #work summary i{float:none;display:block;padding:.2rem 0;font-size:.78rem}
 #work details p,#work .process-sample,#work .exhibit-actions{margin-inline:.85rem}
 #work summary:hover{transform:none}
+.world{align-self:center}.world-stage{position:relative;isolation:isolate}.world-stage canvas{width:100%;aspect-ratio:11/7;display:block;image-rendering:pixelated}
+#world-intro{position:absolute;inset:0;display:grid;align-content:center;justify-items:center;text-align:center;background:linear-gradient(100deg,#061522e8,#101e2bdc);padding:.65rem}
+#world-intro[hidden],.world-panel[hidden]{display:none}#world-intro h3{font-size:clamp(1.4rem,3vw,2.4rem);margin:.25rem}#world-intro p{font-size:.95rem;margin:.4rem auto;max-width:29ch}
+.world button{border:1px solid #42616e;background:#132e3b;color:#c1ffee;padding:.4rem .7rem;border-radius:4px;cursor:pointer}#world-start{background:#72ecd5;color:#0b201d;font-weight:700}
+.world-panel{padding:.7rem 1rem 1rem}.world-heading,.world-controls{display:flex;align-items:center;gap:.4rem}.world-heading{justify-content:space-between}.world-controls{margin:.6rem 0}.world-controls button{min-width:42px;min-height:38px}
+.world #room-note{font-size:.95rem;margin:.4rem 0}.world-panel small{font-size:.75rem}

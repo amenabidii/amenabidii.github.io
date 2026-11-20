@@ -3,13 +3,15 @@
 <a class="skip" href="#work">Skip to projects</a>
 <header><a class="brand" href="#">amenabidii</a><nav aria-label="Main navigation"><a href="#research">Research</a><a href="#interests">Interests</a><a href="#work">Work</a><a href="#about">My story</a><a href="#contact">Contact</a></nav><a class="resume" href="resume.pdf">Résumé PDF</a></header>
 <main><section class="hero"><div><small>SOFTWARE &amp; DATA SCIENCE · CAIRO, EG</small><h1>Mohamed<br>Amen Allah<br><em>Abidi.</em></h1><p>I build web tools for everyday problems and study the patterns people leave in data.</p><a class="cta" href="#work">Explore my work</a></div>
-<figure id="lab">
- <div class="instrument"><span>Amen’s pocket arcade</span><span id="mode-label">RHYTHM</span></div>
- <div class="lab-display" id="lab-display" aria-hidden="true"></div>
- <p class="lab-note" id="lab-note"></p>
- <div class="lab-input" id="lab-input"></div>
- <figcaption><label for="frequency">Switch experiment</label><input id="frequency" type="range" min="0" max="2" value="0" step="1"><output for="frequency">1 / 3</output></figcaption>
-</figure></section>
+<figure id="lab" class="world">
+<div class="instrument"><span>Amenos’s world</span><span id="world-count">PORTFOLIO GAME</span></div>
+<div class="world-stage" tabindex="0" role="group" aria-label="Explore with arrow keys or WASD">
+<canvas id="world-canvas" width="352" height="224" aria-label="A pixel maze with labeled doors"></canvas>
+<div id="world-intro"><img src="little-amen.svg" alt="" width="48" height="60"><h3>Meet me in the maze.</h3><p>Pick a door. Discover the work and the person behind it.</p><button id="world-start">Enter my world</button></div></div>
+<div class="world-panel" hidden><div class="world-heading"><strong id="room-name"></strong><button id="world-mute" aria-pressed="false">Mute audio</button></div>
+<p id="room-note" aria-live="polite"></p><a id="room-link" hidden>Explore this story</a>
+<div class="world-controls" aria-label="Move Amenos"><button data-dir="left" aria-label="Move left">◀</button><button data-dir="up" aria-label="Move up">▲</button><button data-dir="down" aria-label="Move down">▼</button><button data-dir="right" aria-label="Move right">▶</button></div>
+<small>Arrow keys or WASD · Walk into a doorway</small></div></figure></section>
 <section id="research"><small>RESEARCH &amp; INTERESTS</small><h2>Questions I follow<span>.</span></h2>
 <div class="research-grid">
 <article id="methods"><h3>What shapes cognition?</h3><p>In a team study of 80,000 records, I examined how sleep and stress relate to reaction time and memory.</p></article>
@@ -49,14 +51,14 @@
       <p class="outcome"><strong>49</strong> incoming students in the group I co-guided.</p>
     </article>
     <article id="piano"><small>AUC MUSICANA · PIANO</small><h3>From the keyboard to the keys</h3>
-      <p>There’s another place to find me on campus. I play piano with AUC Musicana, and AUC President Ahmad Dallal recognised my contribution to campus musical life. The rhythm experiment in my pocket arcade is a little piece of that world.</p>
+      <p>There’s another place to find me on campus. I play piano with AUC Musicana, and AUC President Ahmad Dallal recognised my contribution to campus musical life. You can find the music room inside my portfolio game.</p>
       <p class="outcome"><strong>15+</strong> university events performed as a pianist.</p>
-      <a href="#frequency">Try the pocket arcade</a>
+      <a href="#lab">Explore Amenos’s world</a>
     </article>
   </div>
 </section>
 <section id="contact"><small>CONTACT</small><h2>Let’s talk<span>.</span></h2><p>I’m seeking a summer 2027 internship in software development, data analytics or applied technology research.</p><a class="mail" href="mailto:amenabidii@aucegypt.edu">amenabidii@aucegypt.edu</a></section></main>
-<footer><b>Mohamed Amen Allah Abidi</b><a href="https://github.com/amenabidii">GitHub</a><a href="https://eg.linkedin.com/in/amenabidii">LinkedIn</a><a href="resume.pdf" download>Download résumé</a></footer><script defer src="signal.js"></script><script defer src="story.js"></script><button id="ask-amen" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="guide">Ask Amenos</button>
+<footer><b>Mohamed Amen Allah Abidi</b><a href="https://github.com/amenabidii">GitHub</a><a href="https://eg.linkedin.com/in/amenabidii">LinkedIn</a><a href="resume.pdf" download>Download résumé</a></footer><script defer src="world.js"></script><script defer src="story.js"></script><button id="ask-amen" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="guide">Ask Amenos</button>
 <dialog id="guide" aria-labelledby="guide-title">
   <div class="guide-head">
     <div class="mascot" aria-hidden="true"><img src="little-amen.svg" width="60" height="75" alt=""><span class="keys"></span></div>

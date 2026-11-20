@@ -12,7 +12,7 @@ const exhibits = [
  ["#activism","240+ young people|Climate workshops|400+ signatures","resume.pdf#page=2","Fieldwork record",9],
  ["#access","Visit facilities|Document barriers|Report findings","resume.pdf#page=2","Assessment record",10],
  ["#campus","Welcome students|Explore AUC|49 students guided","resume.pdf#page=2","Campus experience",11],
- ["#piano","AUC Musicana|Piano|15+ events","#lab","Play the pads",12],
+ ["#piano","AUC Musicana|Piano|15+ events","#lab","Explore the game",12],
  ["#methods","80,000 observations|Compare groups|Check assumptions","#project-5","Explore the study",5],
  ["#interests","Perception|Learning|Human decisions","resume.pdf#page=1","Research interests",19]
 ];

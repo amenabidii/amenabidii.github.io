@@ -1,12 +1,12 @@
 // Two doors at the north end of each room. The southern arch leads back.
 const rooms = {
  atrium:["The atrium","Choose Work or Campus. Explore six rooms to fill your field journal.","#research","Work","work","Campus","campus","#6de9cd"],
- work:["The workshop","At a library printer, a file on a phone needed a way onto a shared PC. Fly-QR grew out of that small frustration.","#project-0","Research","research","Studio","studio","#86ceff"],
+ work:["Amen’s office","At a library printer, a file on a phone needed a way onto a shared PC. Fly-QR grew out of that small frustration.","#project-0","Research","research","Studio","studio","#86ceff"],
  campus:["Campus commons","As a peer moderator, Amen co-guided 49 incoming AUC students. Two doors lead beyond orientation.","#campus","Fieldwork","field","Music","music","#efc77c"],
  research:["Research lab","A team led by Amen explored sleep, stress, memory and reaction time across 80,000 records.","#project-5","Studio","studio","Atrium","atrium","#baacff"],
  studio:["Prototype studio","Turn back the clock in The Observer Paradox and the observer still remembers. Try that mechanic in the project gallery.","#project-4","Workshop","work","Research","research","#ec98ad"],
  field:["Kasserine field station","More than 240 young people contributed to climate research. Amen co-led a petition that gathered over 400 signatures.","#activism","Music","music","Atrium","atrium","#a7e8a4"],
- music:["Music room","Amen played piano at more than 15 university events with AUC Musicana. The melody here is an original game loop.","#piano","Fieldwork","field","Campus","campus","#ffb1a0"]
+ music:["Bedroom & piano","Amen played piano at more than 15 university events with AUC Musicana. The melody here is an original game loop.","#piano","Fieldwork","field","Campus","campus","#ffb1a0"]
 };
 const canvas=document.querySelector("#world-canvas");
 const ctx=canvas.getContext("2d");
@@ -16,10 +16,7 @@ hero.src="little-amen.svg";
 let room="atrium", x=176,y=174,started=false,muted=false,context,musicTimer,melodyStep=0;
 const visited=new Set();
 const trail=[];
-const walls={
- atrium:[[3,2],[3,3],[7,2],[7,3],[5,4]],work:[[3,3],[4,3],[7,4]],campus:[[3,4],[7,3],[6,3]],
- research:[[2,3],[3,3],[6,4],[7,4]],studio:[[4,3],[6,3],[7,3]],field:[[2,4],[3,4],[7,3]],music:[[3,3],[4,3],[7,4]]
-};
+let roomAction="";
 function block(a,b,w,h,color){ctx.fillStyle=color;ctx.fillRect(a,b,w,h);}
 function door(tileX,label,accent){
  const a=tileX*32;
@@ -27,31 +24,24 @@ function door(tileX,label,accent){
  ctx.font="bold 9px monospace";ctx.textAlign="center";const w=ctx.measureText(label).width;
  block(a+16-w/2-3,45,w+6,12,"#0a1621");ctx.fillStyle=accent;ctx.fillText(label,a+16,54);
 }
-function prop(a,b,color){
- block(a+1,b+17,30,12,"#0b1924");
- if(room==="field"||room==="campus"||room==="atrium"){
-  block(a+10,b+16,14,12,"#925e4a");block(a+15,b+5,3,15,"#a6c67b");
-  block(a+5,b+6,12,8,"#477d65");block(a+17,b+2,10,9,"#76ad83");
- }else{
-  block(a+2,b+7,28,18,"#31475a");block(a+3,b+4,25,14,color);
-  if(room==="music"){for(let i=0;i<7;i++)block(a+4+3*i,b+7,2,8,"#152431");}
-  else{block(a+6,b+7,19,7,"#1a3443");block(a+8,b+10,10,1,color);}
- }
-}
 function paint(){
  const accent=rooms[room][7];
- for(let row=0;row<7;row++)for(let col=0;col<11;col++){
-  const a=col*32,b=row*32,border=col===0||col===10||row===0||row===6;
-  block(a,b,32,32,border?"#182e40":((row+col)%2?"#263c49":"#2a414c"));
-  block(a,b,32,1,border?"#486476":"#334d55");block(a,b,1,32,"#203540");
-  if(border){block(a+2,b+16,28,2,"#101f30");block(a+14,b+1,2,14,"#102332");}
-  else{block(a+8,b+19,5,1,"#37515b");block(a+22,b+7,2,1,"#405862");}
- }
+ sceneArt();
  door(2,rooms[room][3],accent);door(8,rooms[room][5],accent);
- for(const [col,row] of walls[room])prop(col*32,row*32,accent);
  if(trail.length){block(5*32+2,194,28,25,"#081722");ctx.fillStyle=accent;ctx.font="bold 10px monospace";ctx.textAlign="center";ctx.fillText("BACK",176,211);}
- block(x-9,y-2,19,4,"#152932");
- if(hero.complete&&hero.naturalWidth)ctx.drawImage(hero,Math.round(x)-13,Math.round(y)-30-Math.round(Math.abs(Math.sin(stride/6))*2),26,32);
+ const drawHero=()=>{
+   block(x-9,y-2,19,4,"#152932");
+   if(hero.complete&&hero.naturalWidth)ctx.drawImage(hero,Math.round(x)-13,Math.round(y)-30-Math.round(Math.abs(Math.sin(stride/6))*2),26,32);
+ };
+ let drawn=false;
+ for(const item of [...furniture[room]].sort((a,b)=>(a[2]+a[4])-(b[2]+b[4]))){
+   if(!drawn&&item[2]+item[4]>y){drawHero();drawn=true;}
+   drawFurniture(item);
+ }
+ if(!drawn)drawHero();
+ const item=nearby(),button=document.querySelector("#inspect");
+ button.disabled=!item;
+ button.textContent=item?item[5]:"Inspect nearby object";
 }
 hero.onload=paint;
 function tone(freq,duration,volume,type="triangle"){
@@ -71,7 +61,7 @@ function music(){
 }
 function enter(id,back=false){
  if(!back && id!==room)trail.push(room);
- room=id; visited.add(room); x=176;y=174;
+ roomAction="";room=id; visited.add(room); x=176;y=174;
  const [name,note,url]=rooms[room];
  document.querySelector("#room-name").textContent=name;
  document.querySelector("#room-note").textContent=note;
@@ -84,9 +74,27 @@ const directions={ArrowUp:"up",w:"up",ArrowLeft:"left",a:"left",ArrowDown:"down"
 const held=new Map();
 let frame=0,previous=0,stride=0;
 function clearMovement(){held.clear();cancelAnimationFrame(frame);frame=0;previous=0;paint();}
+function nearby(){
+ let closest=null,best=23;
+ for(const item of furniture[room]){
+   if(!item[5])continue;
+   const [,a,b,w,h]=item;
+   const d=Math.hypot(Math.max(a-x,0,x-a-w),Math.max(b+h*.55-y,0,y-b-h));
+   if(d<best){best=d;closest=item;}
+ }
+ return closest;
+}
+function inspect(){
+ const item=nearby();if(!item)return;
+ roomAction=item[5];document.querySelector("#room-note").textContent=item[6];
+ if(item[0]==="piano") [262,330,392,523].forEach((note,i)=>setTimeout(()=>{if(room==="music")tone(note,.36,.1,"sine");},i*120));
+ else tone(392,.12,.07);
+ paint();
+}
+document.querySelector("#inspect").onclick=inspect;
 function canStand(px,py){
- return px>=17 && px<=335 && py>=44 && py<=207 &&
- !walls[room].some(([a,b])=>px>a*32-5&&px<a*32+35&&py>b*32+8&&py<b*32+32);
+ return px>=14&&px<=338&&py>=44&&py<=207&&!furniture[room].some(([,a,b,w,h])=>
+   px>a-5&&px<a+w+5&&py>b+h*.60-2&&py<b+h+2);
 }
 function advance(dx,dy){
  if(canStand(x+dx,y))x+=dx;
@@ -120,6 +128,7 @@ document.querySelector("#world-start").onclick=()=>{
  enter("atrium");music();stage.focus({preventScroll:true});
 };
 stage.onkeydown=e=>{
+ if(started&&e.key.toLowerCase()==="e"){e.preventDefault();if(!e.repeat)inspect();return;}
  const dir=directions[e.key]||directions[e.key.toLowerCase()];
  if(started&&dir){e.preventDefault();hold(e.code,dir);}
 };

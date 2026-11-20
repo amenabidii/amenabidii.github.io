@@ -53,7 +53,7 @@ function selectMode() {
   slider.setAttribute("aria-valuetext", names[mode]);
   document.querySelector("output").value = mode+1+" / 3";
   notes.textContent = [
-    "Build an eight-step visual rhythm. Tap a beat to lift or mute its column.",
+    "Tap the eight pads to play a rising scale and shape your rhythm.",
     "Weave a word into light. Each column shows one character’s binary code, with bright dots for ones.",
     "Design a sharing room. Add devices to see how many direct pairs are possible."
   ][mode];
@@ -63,7 +63,7 @@ function selectMode() {
       const button = element("button",String(i+1));
       button.setAttribute("aria-label","Beat "+(i+1));
       button.setAttribute("aria-pressed",String(on));
-      button.onclick = () => { beats[i]=!beats[i]; button.setAttribute("aria-pressed",String(beats[i])); paint(); };
+      button.onclick = () => { playBeat(i); beats[i]=!beats[i]; button.setAttribute("aria-pressed",String(beats[i])); paint(); };
       controls.append(button);
     });
   } else {
@@ -79,3 +79,23 @@ function selectMode() {
 }
 slider.addEventListener("input",selectMode);
 selectMode();
+let sound;
+async function playBeat(step) {
+  try {
+    sound ??= new AudioContext();
+    if (sound.state !== "running") await sound.resume();
+    const tone = sound.createOscillator();
+    const gain = sound.createGain();
+    const t = sound.currentTime;
+    tone.type = "triangle";
+    tone.frequency.value = [131,165,196,220,262,330,392,440][step];
+    gain.gain.setValueAtTime(.001,t);
+    gain.gain.exponentialRampToValueAtTime(.3,t+.008);
+    gain.gain.exponentialRampToValueAtTime(.001,t+.24);
+    tone.connect(gain).connect(sound.destination);
+    tone.start(t);
+    tone.stop(t+.25);
+    tone.onended = () => { tone.disconnect(); gain.disconnect(); };
+  } catch { notes.textContent = "Audio is unavailable in this browser."; }
+}
+

@@ -67,7 +67,7 @@ async function ask(text) {
   const bubble = message("Amenos is typing…", "answer");
   guide.classList.add("thinking");
   try {
-    const answer = await reply(text);
+    const [answer] = await Promise.all([reply(text),new Promise(done => setTimeout(done,650))]);
     bubble.textContent = answer;
   } catch {
     bubble.textContent = "My search is unavailable. Try an email, project or activity suggestion.";
@@ -173,3 +173,4 @@ function semanticTopic(text) {
     searchWorker.postMessage({text});
   });
 }
+

@@ -60,7 +60,15 @@ function ask(text) {
     pending = null;
   }, 700);
 }
-document.querySelector("#ask-amen").onclick = () => { guide.showModal(); question.focus(); };
+const launcher = document.querySelector("#ask-amen");
+launcher.onclick = () => {
+  if (guide.open) return guide.close();
+  guide.show();
+  launcher.setAttribute("aria-expanded", "true");
+  question.focus({preventScroll:true});
+};
+guide.addEventListener("close", () => { launcher.setAttribute("aria-expanded","false"); launcher.focus({preventScroll:true}); });
+guide.addEventListener("keydown", event => { if (event.key === "Escape") guide.close(); });
 document.querySelector("#close-guide").onclick = () => guide.close();
 form.onsubmit = event => {
   event.preventDefault();
@@ -71,3 +79,4 @@ form.onsubmit = event => {
 document.querySelector("#prompts").onclick = event => {
   if (event.target.matches("button")) ask(event.target.textContent);
 };
+

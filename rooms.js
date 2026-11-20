@@ -33,14 +33,19 @@ const sceneColors={
  studio:["#363546","#484456","#ae8599"],field:["#455648","#576751","#8c9f69"],
  music:["#574443","#69534c","#c69576"]
 };
+const mapWidth=704,mapHeight=368;
+// Spread the furnishings across a walkable floor larger than the camera viewport.
+for(const items of Object.values(furniture)){
+ for(const item of items){item[1]=Math.round(item[1]*1.97);item[2]=Math.round(item[2]*1.52);}
+}
 function sceneArt(){
  const [floor,seam,trim]=sceneColors[room];
- block(0,0,352,224,floor);
- for(let j=0;j<14;j++){
-   block(0,38+j*14,352,1,seam);
-   for(let i=-1;i<6;i++)block(i*76+(j%2)*38,39+j*14,1,13,seam);
+ block(0,0,mapWidth,mapHeight,floor);
+ for(let j=0;j<25;j++){
+   block(0,38+j*14,mapWidth,1,seam);
+   for(let i=-1;i<11;i++)block(i*76+(j%2)*38,39+j*14,1,13,seam);
  }
- block(0,0,352,38,"#1b2937");block(0,34,352,4,trim);
+ block(0,0,mapWidth,38,"#1b2937");block(0,34,mapWidth,4,trim);
  // A recessed window overlooks distant city lights or the field station hills.
  block(116,3,119,29,"#091824");block(119,5,113,23,"#44627a");
  for(let i=0;i<15;i++){
@@ -48,7 +53,7 @@ function sceneArt(){
    if(i%2)block(121+i*8,29-h,2,2,"#dfbb7b");
  }
  block(173,4,3,25,trim);block(115,28,121,3,trim);
- block(0,38,6,186,"#172630");block(346,38,6,186,"#172630");
+ block(0,38,6,mapHeight-38,"#172630");block(mapWidth-6,38,6,mapHeight-38,"#172630");
  const rug=room==="music"?"#93575d":room==="field"?"#656953":"#446571";
  block(113,137,112,62,rug);
  for(const inset of [3,7]){ctx.strokeStyle=trim;ctx.strokeRect(113+inset+.5,137+inset+.5,111-inset*2,61-inset*2);}

@@ -16,7 +16,12 @@ hero.src="little-amen.svg";
 let room="atrium", x=176,y=174,started=false,muted=false,context,musicTimer,melodyStep=0;
 const visited=new Set();
 const trail=[];
-let roomAction="";
+let roomAction="",currentItem=null;
+let cameraX=0,cameraY=0;
+const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+const notice=document.querySelector("#world-toast");
+function notifyWorld(text){notice.textContent=text;notice.hidden=!text;}
+
 function block(a,b,w,h,color){ctx.fillStyle=color;ctx.fillRect(a,b,w,h);}
 function door(tileX,label,accent){
  const a=tileX*32;
@@ -26,9 +31,12 @@ function door(tileX,label,accent){
 }
 function paint(){
  const accent=rooms[room][7];
+ cameraX=clamp(x-canvas.width/2,0,mapWidth-canvas.width);
+ cameraY=clamp(y-canvas.height/2,0,mapHeight-canvas.height);
+ ctx.save();ctx.translate(-Math.round(cameraX),-Math.round(cameraY));
  sceneArt();
- door(2,rooms[room][3],accent);door(8,rooms[room][5],accent);
- if(trail.length){block(5*32+2,194,28,25,"#081722");ctx.fillStyle=accent;ctx.font="bold 10px monospace";ctx.textAlign="center";ctx.fillText("BACK",176,211);}
+ door(2,rooms[room][3],accent);door(18,rooms[room][5],accent);
+ if(trail.length){block(338,342,28,25,"#081722");ctx.fillStyle=accent;ctx.font="bold 10px monospace";ctx.textAlign="center";ctx.fillText("BACK",352,359);}
  const drawHero=()=>{
    block(x-9,y-2,19,4,"#152932");
    if(hero.complete&&hero.naturalWidth)ctx.drawImage(hero,Math.round(x)-13,Math.round(y)-30-Math.round(Math.abs(Math.sin(stride/6))*2),26,32);
@@ -39,9 +47,20 @@ function paint(){
    drawFurniture(item);
  }
  if(!drawn)drawHero();
+ ctx.restore();
+ // The pocket map marks the player, both exits, and the current camera window.
+ block(268,5,79,45,"#08121ce6");
+ ctx.strokeStyle="#557480";ctx.strokeRect(270+cameraX*.104,7+cameraY*.108,canvas.width*.104,canvas.height*.108);
+ for(const px of [80,592])block(270+px*.104,11,3,3,accent);
+ block(270+x*.104,7+y*.108,4,4,"#fff3ba");
  const item=nearby(),button=document.querySelector("#inspect");
+ if(started&&item!==currentItem){
+   currentItem=item;
+   notifyWorld(item ? (item[5]||item[0])+" nearby" : "");
+ }
+ button.hidden=!started||!item;
  button.disabled=!item;
- button.textContent=item?item[5]:"Inspect nearby object";
+ button.textContent=item?"Inspect · "+(item[5]||item[0]):"Inspect nearby object";
 }
 hero.onload=paint;
 function tone(freq,duration,volume,type="triangle"){
@@ -61,7 +80,7 @@ function music(){
 }
 function enter(id,back=false){
  if(!back && id!==room)trail.push(room);
- roomAction="";room=id; visited.add(room); x=176;y=174;
+ roomAction="";room=id;currentItem=null;notifyWorld("");visited.add(room); x=352;y=282;
  const [name,note,url]=rooms[room];
  document.querySelector("#room-name").textContent=name;
  document.querySelector("#room-note").textContent=note;
@@ -78,7 +97,7 @@ function clearMovement(){stick=null;held.clear();cancelAnimationFrame(frame);fra
 function nearby(){
  let closest=null,best=23;
  for(const item of furniture[room]){
-   if(!item[5])continue;
+   
    const [,a,b,w,h]=item;
    const d=Math.hypot(Math.max(a-x,0,x-a-w),Math.max(b+h*.55-y,0,y-b-h));
    if(d<best){best=d;closest=item;}
@@ -87,21 +106,21 @@ function nearby(){
 }
 function inspect(){
  const item=nearby();if(!item)return;
- roomAction=item[5];document.querySelector("#room-note").textContent=item[6];
+ roomAction=item[5]||item[0];notifyWorld(item[6]||("A "+item[0]+" in "+rooms[room][0]+"."));
  if(item[0]==="piano") [262,330,392,523].forEach((note,i)=>setTimeout(()=>{if(room==="music")tone(note,.36,.1,"sine");},i*120));
  else tone(392,.12,.07);
  paint();
 }
 document.querySelector("#inspect").onclick=inspect;
 function canStand(px,py){
- return px>=14&&px<=338&&py>=44&&py<=207&&!furniture[room].some(([,a,b,w,h])=>
+ return px>=14&&px<=mapWidth-14&&py>=44&&py<=mapHeight-12&&!furniture[room].some(([,a,b,w,h])=>
    px>a-5&&px<a+w+5&&py>b+h*.60-2&&py<b+h+2);
 }
 function advance(dx,dy){
  if(canStand(x+dx,y))x+=dx;
  if(canStand(x,y+dy))y+=dy;
- if(y<=49&&(Math.abs(x-80)<14||Math.abs(x-272)<14)){enter(rooms[room][x<176?4:6]);clearMovement();return;}
- if(trail.length&&y>=200&&Math.abs(x-176)<15){enter(trail.pop(),true);clearMovement();}
+ if(y<=49&&(Math.abs(x-80)<14||Math.abs(x-592)<14)){enter(rooms[room][x<352?4:6]);clearMovement();return;}
+ if(trail.length&&y>=345&&Math.abs(x-352)<15){enter(trail.pop(),true);clearMovement();}
 }
 function walk(now){
  const dt=previous?Math.min((now-previous)/1000,.04):1/60;
@@ -170,3 +189,12 @@ canvas.onpointermove=e=>{
  stick.dy=length>4?dy/length:0;
 };
 canvas.onlostpointercapture=e=>{if(stick?.id===e.pointerId)stick=null;};
+const expandWorld=document.querySelector("#expand-world");
+function resizeWorld(expanded){
+ document.querySelector("#lab").classList.toggle("expanded",expanded);
+ expandWorld.setAttribute("aria-pressed",String(expanded));
+ expandWorld.textContent=expanded?"Exit wide view":"Expand game";
+ if(started)stage.focus({preventScroll:true});
+}
+expandWorld.onclick=()=>resizeWorld(expandWorld.getAttribute("aria-pressed")!=="true");
+window.addEventListener("keydown",event=>{if(event.key==="Escape"&&expandWorld.getAttribute("aria-pressed")==="true")resizeWorld(false);});

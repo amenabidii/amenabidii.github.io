@@ -11,8 +11,8 @@ const highlights=document.querySelector("#honors-list");
 for(const h of honors){
  const li=document.createElement("li"),tag=document.createElement("span");
  tag.className="award-tag "+h.tag.toLowerCase();tag.textContent=h.tag;
- const desc=document.createElement("details"),summary=document.createElement("summary"),title=document.createElement("strong"),p=document.createElement("p");
- title.textContent=h.name+" · "+h.year;p.textContent=h.body;summary.append(tag,title);desc.append(summary,p);li.append(desc);if(h.image){
+ const desc=document.createElement("details"),summary=document.createElement("summary"),title=document.createElement("strong"),blurb=document.createElement("span");
+ title.textContent=h.name+" · "+h.year;blurb.className="award-blurb";blurb.textContent=h.body;summary.append(tag,title,blurb);desc.append(summary);li.append(desc);if(h.image){
    const figure=document.createElement("figure"),image=document.createElement("img"),caption=document.createElement("figcaption");
    image.src="honors/"+h.image+".webp";image.alt=h.caption;image.loading="lazy";
    caption.textContent=h.caption;

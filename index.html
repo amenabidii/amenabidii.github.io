@@ -3,7 +3,13 @@
 <a class="skip" href="#work">Skip to projects</a>
 <header><a class="brand" href="#">amenabidii</a><nav aria-label="Main navigation"><a href="#work">Work</a><a href="#about">My story</a><a href="#contact">Contact</a></nav><a class="resume" href="resume.pdf">Résumé PDF</a></header>
 <main><section class="hero"><div><small>SOFTWARE &amp; DATA SCIENCE · CAIRO, EG</small><h1>Mohamed<br>Amen Allah<br><em>Abidi.</em></h1><p>I build web tools for everyday problems and study the patterns people leave in data.</p><a class="cta" href="#work">Explore my work</a></div>
-<figure><div class="instrument"><span>Piano wave lab</span><span>HARMONICS</span></div><canvas width="680" height="460" aria-label="A cyan wireframe wave made from layered sine functions"></canvas><p class="lab-note">A silent sketch of a vibrating string. Raise the frequency to fit more peaks into each line. Move across the grid to shift the wave.</p><figcaption><label for="frequency">Frequency</label><input id="frequency" type="range" min="1" max="9" value="4"><output for="frequency">4×</output></figcaption></figure></section>
+<figure id="lab">
+ <div class="instrument"><span>Amen’s pocket arcade</span><span id="mode-label">RHYTHM</span></div>
+ <div class="lab-display" id="lab-display" aria-hidden="true"></div>
+ <p class="lab-note" id="lab-note"></p>
+ <div class="lab-input" id="lab-input"></div>
+ <figcaption><label for="frequency">Switch experiment</label><input id="frequency" type="range" min="0" max="2" value="0" step="1"><output for="frequency">1 / 3</output></figcaption>
+</figure></section>
 <section id="work"><small>PROJECT ARCHIVE</small><h2>Selected work<span>.</span></h2>
 <details open><summary>Fly-QR <i>Full-stack development</i></summary><p>Signing into a personal messaging account on a library computer just to print a file felt unnecessary. I built a QR-linked room that connects two browsers without an account.</p><p>Files travel directly over WebRTC when possible. A Socket.IO relay handles connections where a direct path fails.</p><small>REACT / NODE.JS / WEBRTC / REDIS</small></details>
 <details><summary>VentureLab <i>Agent systems</i></summary><p>At the MADS × CSCE AI Hackathon, I co-developed a ten-agent system that takes a founder through six phases of venture development. Local language models support market research, validation and prototyping. We checked workflows and founder approvals with 692 passing Python tests and 37 browser tests.</p><small>PYTHON / FASTAPI / OLLAMA / DOCKER</small></details>
@@ -39,9 +45,9 @@
       <p class="outcome"><strong>49</strong> incoming students in the group I co-guided.</p>
     </article>
     <article id="piano"><small>AUC MUSICANA · PIANO</small><h3>From the keyboard to the keys</h3>
-      <p>There’s another place to find me on campus. I play piano with AUC Musicana, and AUC President Ahmad Dallal recognised my contribution to campus musical life. The waveform at the top of this page is a little piece of that world.</p>
+      <p>There’s another place to find me on campus. I play piano with AUC Musicana, and AUC President Ahmad Dallal recognised my contribution to campus musical life. The rhythm experiment in my pocket arcade is a little piece of that world.</p>
       <p class="outcome"><strong>15+</strong> university events performed as a pianist.</p>
-      <a href="#frequency">Back to the signal study</a>
+      <a href="#frequency">Try the pocket arcade</a>
     </article>
   </div>
 </section>
@@ -58,6 +64,7 @@
   <form id="ask-form"><label for="question">Ask about Amen’s portfolio</label><div><input id="question" maxlength="240" required autocomplete="off" placeholder="How does FlyQR work?"><button>Send</button></div></form>
 </dialog>
 <script src="guide.js" defer></script></body></html>
+
 
 
 

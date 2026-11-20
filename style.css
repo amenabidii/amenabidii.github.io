@@ -56,3 +56,11 @@ footer {padding-bottom:5rem}
 .keys{position:absolute;bottom:22px;right:-2px;width:19px;height:4px;background:#79ead6;box-shadow:0 3px #3e6878;transform-origin:left}
 #guide{position:fixed;inset:auto .35rem 4.3rem auto;margin:0;z-index:5;max-height:min(32rem,64dvh)}
 #guide:not([open]){display:none}
+.lab-display{height:clamp(160px,20vw,260px);position:relative;display:flex;align-items:end;justify-content:center;gap:2%;padding:1.2rem;background-image:radial-gradient(#4a6979 1px,transparent 1px);background-size:16px 16px}
+.mode-0 span{width:8%;background:repeating-linear-gradient(to top,transparent 0 2px,#75edda 2px 9px);border-top:3px solid #e6fff7}
+.mode-1{align-items:center;overflow:hidden}.mode-1 span{display:grid;text-align:center;color:#dfefff;font:600 .9rem/1 Consolas,monospace}.mode-1 i{color:#7cead5}
+.mode-2 span,.mode-2 b{position:absolute;transform:translate(-50%,-50%);border:1px solid #71e1d1;padding:.25rem .55rem;border-radius:1rem;background:#132e39}.mode-2 b{top:50%;left:50%;border-color:#577389}
+.lab-input{display:flex;gap:.28rem;align-items:center;padding:.2rem 1.4rem 1rem;min-height:3rem}
+.lab-input button{flex:1;background:#152b39;color:white;border:1px solid #486273;cursor:pointer;padding:.45rem .1rem}
+.lab-input button[aria-pressed=true]{color:#09201f;background:#75edda}
+.lab-input input{width:9rem;max-width:55vw;font:inherit}.lab-note{padding-top:1rem}

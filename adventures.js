@@ -43,7 +43,7 @@ furniture.music.push(["desk",423,212,76,45,"Writing desk","Browse the project sh
 rooms.music[0]="Amen’s bedroom";
 rooms.music[1]="Start at the north wall: six doors open into my work, research and community. Inspect the room to find a score, a journal and a team photograph.";
 function drawPortal(item){
- const [,px,py,w,h,label,id]=item,accent=rooms["memory"+id][7];
+ const [,px,py,w,h,label,,id]=item,accent=rooms["memory"+id][7];
  block(px-2,py+h-6,w+4,7,"#101e2a");
  ctx.strokeStyle=accent;ctx.lineWidth=3;ctx.beginPath();ctx.ellipse(px+w/2,py+h/2,w*.44,h*.46,0,0,Math.PI*2);ctx.stroke();ctx.lineWidth=1;
  block(px+w/2-4,py+h/2-4,8,8,stampBook.has(id)?"#efc96a":accent);
@@ -141,3 +141,4 @@ function finishMemory(id){
  }
  const leave=document.createElement("button");leave.textContent="Return to room";leave.onclick=()=>{panel.hidden=true;stage.focus({preventScroll:true});};panel.append(feedback,leave);panel.querySelector("button").focus();
 }
+

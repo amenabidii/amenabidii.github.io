@@ -43,10 +43,10 @@ function paint(){
  if(room==="music"&&plantWatered){const plant=furniture.music.find(i=>i[0]==="plant");block(plant[1]+8,plant[2],6,4,"#a6f592");}
  ctx.restore();
  // The pocket map marks the player, both exits, and the current camera window.
- block(268,5,79,45,"#08121ce6");
+ if(room!=="music"){block(268,5,79,45,"#08121ce6");
  ctx.strokeStyle="#557480";ctx.strokeRect(270+cameraX*(74/mapWidth),7+cameraY*(40/mapHeight),canvas.width*(74/mapWidth),canvas.height*(40/mapHeight));
  for(const [px] of doorsHere())block(270+px*(74/mapWidth),11,3,3,accent);
- block(270+x*(74/mapWidth),7+y*(40/mapHeight),4,4,"#fff3ba");
+ block(270+x*(74/mapWidth),7+y*(40/mapHeight),4,4,"#fff3ba");}
  const item=nearby(),button=document.querySelector("#inspect");
  if(started&&item!==currentItem){
    currentItem=item;
@@ -200,3 +200,4 @@ function resizeWorld(expanded){
 }
 expandWorld.onclick=()=>resizeWorld(expandWorld.getAttribute("aria-pressed")!=="true");
 window.addEventListener("keydown",event=>{if(event.key==="Escape"&&expandWorld.getAttribute("aria-pressed")==="true")resizeWorld(false);});
+

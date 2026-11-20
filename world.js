@@ -1,12 +1,13 @@
 // Two doors at the north end of each room. The southern arch leads back.
 const rooms = {
- atrium:["The atrium","Choose Work or Campus. Explore six rooms to fill your field journal.","#research","Work","work","Campus","campus","#6de9cd"],
+ queue:["The referral rush","Get past the wasta queue-jumpers and take both proofs to the interview desk in the east.","#contact","Studio","studio","Atrium","atrium","#ebb17f"],
+ atrium:["The atrium","Help Amen earn a software position. Start north-west at Work, then take your evidence to the code lab.","#research","Work","work","Campus","campus","#6de9cd"],
  work:["Amen’s office","At a library printer, a file on a phone needed a way onto a shared PC. Fly-QR grew out of that small frustration.","#project-0","Research","research","Studio","studio","#86ceff"],
  campus:["Campus commons","As a peer moderator, Amen co-guided 49 incoming AUC students. Two doors lead beyond orientation.","#campus","Fieldwork","field","Music","music","#efc77c"],
  research:["Research lab","A team led by Amen explored sleep, stress, memory and reaction time across 80,000 records.","#project-5","Studio","studio","Atrium","atrium","#baacff"],
- studio:["Prototype studio","Turn back the clock in The Observer Paradox and the observer still remembers. Try that mechanic in the project gallery.","#project-4","Workshop","work","Research","research","#ec98ad"],
+ studio:["Night-shift code lab","Turn back the clock in The Observer Paradox and the observer still remembers. Try that mechanic in the project gallery.","#project-4","Workshop","work","Hiring","queue","#ec98ad"],
  field:["Kasserine field station","More than 240 young people contributed to climate research. Amen co-led a petition that gathered over 400 signatures.","#activism","Music","music","Atrium","atrium","#a7e8a4"],
- music:["Bedroom & piano","Amen played piano at more than 15 university events with AUC Musicana. The melody here is an original game loop.","#piano","Fieldwork","field","Campus","campus","#ffb1a0"]
+ music:["Bedroom & piano","Amen played piano at more than 15 university events with AUC Musicana. Approach the upright piano to hear Bach.","#piano","Fieldwork","field","Campus","campus","#ffb1a0"]
 };
 const canvas=document.querySelector("#world-canvas");
 const ctx=canvas.getContext("2d");
@@ -34,7 +35,7 @@ function paint(){
  cameraX=clamp(x-canvas.width/2,0,mapWidth-canvas.width);
  cameraY=clamp(y-canvas.height/2,0,mapHeight-canvas.height);
  ctx.save();ctx.translate(-Math.round(cameraX),-Math.round(cameraY));
- sceneArt();
+ sceneArt();drawAtmosphere();
  door(2,rooms[room][3],accent);door(18,rooms[room][5],accent);
  if(trail.length){block(338,342,28,25,"#081722");ctx.fillStyle=accent;ctx.font="bold 10px monospace";ctx.textAlign="center";ctx.fillText("BACK",352,359);}
  const drawHero=()=>{
@@ -56,7 +57,9 @@ function paint(){
  const item=nearby(),button=document.querySelector("#inspect");
  if(started&&item!==currentItem){
    currentItem=item;
-   notifyWorld(item ? (item[5]||item[0])+" nearby" : "");
+   const atPiano=item?.[0]==="piano";
+   if(atPiano!==bachActive){bachActive=atPiano;music();}
+   notifyWorld(item ? (item[0]==="piano"?"♪ Bach · Little Fugue in G minor":(item[5]||item[0])+" nearby") : "");
  }
  button.hidden=!started||!item;
  button.disabled=!item;
@@ -71,22 +74,16 @@ function tone(freq,duration,volume,type="triangle"){
  osc.connect(gain).connect(context.destination);osc.start(t);osc.stop(t+duration+.01);
  osc.onended=()=>{osc.disconnect();gain.disconnect();};
 }
-const melody=[220,0,330,392,0,294,262,0,196,0,294,330,0,262,247,0];
-function music(){
- clearInterval(musicTimer);
- if(!muted && !document.hidden && started)musicTimer=setInterval(()=>{
-  const note=melody[melodyStep++%melody.length];if(note)tone(note,.3,.035,"sine");
- },350);
-}
 function enter(id,back=false){
  if(!back && id!==room)trail.push(room);
- roomAction="";room=id;currentItem=null;notifyWorld("");visited.add(room); x=352;y=282;
+ roomAction="";room=id;bachActive=false;currentItem=null;notifyWorld("");visited.add(room); x=352;y=282;
+ if(room==="queue"){checkpoint=45;resetQueue();}
  const [name,note,url]=rooms[room];
  document.querySelector("#room-name").textContent=name;
  document.querySelector("#room-note").textContent=note;
  const link=document.querySelector("#room-link");link.hidden=false;link.href=url;
  link.onclick=()=>{const target=document.querySelector(url);if(target?.tagName==="DETAILS")target.open=true;};
- document.querySelector("#world-count").textContent=visited.size===7?"JOURNAL COMPLETE":visited.size+" / 7 ROOMS";
+ updateQuestLabel();music();
  tone(523,.22,.09);paint();
 }
 const directions={ArrowUp:"up",w:"up",ArrowLeft:"left",a:"left",ArrowDown:"down",s:"down",ArrowRight:"right",d:"right"};
@@ -107,8 +104,8 @@ function nearby(){
 function inspect(){
  const item=nearby();if(!item)return;
  roomAction=item[5]||item[0];notifyWorld(item[6]||("A "+item[0]+" in "+rooms[room][0]+"."));
- if(item[0]==="piano") [262,330,392,523].forEach((note,i)=>setTimeout(()=>{if(room==="music")tone(note,.36,.1,"sine");},i*120));
- else tone(392,.12,.07);
+ if(item[0]!=="piano")tone(392,.12,.07);
+ award(item);
  paint();
 }
 document.querySelector("#inspect").onclick=inspect;
@@ -135,7 +132,8 @@ function walk(now){
    if(held.size||stick)stride+=Math.hypot(x-ox,y-oy);
    paint();
  }
- if(held.size||stick)frame=requestAnimationFrame(walk);
+ if(room==="queue"&&!offer){chase(dt,now);paint();}
+ if(held.size||stick||(room==="queue"&&!offer&&!document.hidden))frame=requestAnimationFrame(walk);
  else {frame=0;previous=0;}
 }
 function hold(key,dir){
@@ -145,7 +143,7 @@ function hold(key,dir){
 document.querySelector("#world-start").onclick=()=>{
  started=true;document.querySelector("#world-intro").hidden=true;document.querySelector(".world-panel").hidden=false;
  try{context=new AudioContext();context.resume().catch(()=>{});}catch{}
- enter("atrium");music();stage.focus({preventScroll:true});
+ enter("atrium");stage.focus({preventScroll:true});
 };
 stage.onkeydown=e=>{
  if(started&&e.key.toLowerCase()==="e"){e.preventDefault();if(!e.repeat)inspect();return;}
@@ -165,7 +163,10 @@ document.querySelector("#world-mute").onclick=e=>{
  muted=!muted;e.currentTarget.setAttribute("aria-pressed",String(muted));e.currentTarget.textContent=muted?"Enable audio":"Mute audio";
  if(context){(muted?context.suspend():context.resume()).catch(()=>{});}music();
 };
-document.addEventListener("visibilitychange",music);
+document.addEventListener("visibilitychange",()=>{
+ music();if(!document.hidden&&room==="queue"&&!offer&&!frame)frame=requestAnimationFrame(walk);
+});
+stage.addEventListener("focus",()=>{if(room==="queue"&&!offer&&!frame)frame=requestAnimationFrame(walk);});
 paint();
 const cursorEffects=matchMedia("(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference)");
 document.addEventListener("pointermove",event=>{

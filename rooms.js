@@ -16,7 +16,7 @@ const furniture={
   ["scope",22,69,80,44,"Analysis bench","The cognition study used ANOVA and regression to explore associations in 80,000 records."],
   ["chart",130,60,57,33],["desk",232,93,91,44],["chair",257,145,22,29],["shelf",33,157,74,32]],
  studio:[
-  ["terminal",24,70,80,52,"Observer console","In The Observer Paradox, undo rewinds the simulation while the Observer log keeps its memory."],
+  ["terminal",24,70,80,52,"Build console","In The Observer Paradox, undo rewinds the simulation while the Observer log keeps its memory."],
   ["chair",48,133,24,29],["notice",126,57,64,39],["table",208,112,60,25],["shelf",271,140,61,38],["plant",300,59,22,32]],
  field:[
   ["tent",15,68,77,54,"Field tent","In Kasserine, young people documented how climate change affected their health, education and livelihoods."],
@@ -24,13 +24,18 @@ const furniture={
   ["tree",232,61,41,54],["tree",286,105,43,58],["bench",212,159,61,23],["plant",34,148,26,33]],
  music:[
   ["bed",17,66,52,74,"Bedside notebook","This imagined bedroom connects Amen’s life on campus with his piano performances."],
-  ["lamp",80,83,21,37],["piano",202,72,101,56,"Play the upright piano","Amen performs with AUC Musicana. Play another phrase whenever you return to the keys."],
+  ["lamp",80,83,21,37],["piano",202,72,101,56,"Play the upright piano","Now playing: the opening of Bach’s Little Fugue in G minor, BWV 578. Amen performs with AUC Musicana."],
   ["bench",225,140,51,21],["shelf",93,57,60,39],["plant",305,150,24,37],["table",38,158,48,23]]
 };
-const sceneColors={
+furniture.queue=[
+ ["desk",303,82,86,48,"Interview desk","Present the project and debug evidence for the software position."],
+ ["bench",82,60,56,19],["bench",85,144,57,21],["bench",180,84,52,19],["bench",223,161,61,22],
+ ["notice",22,46,44,38,"Candidate check-in","Avoid the queue jumpers and head east. Your evidence stays with you if you get caught."]
+];
+const sceneColors={queue:["#4c3c43","#624c52","#ddac73"],
  atrium:["#38474d","#435455","#b6a271"],work:["#283d51","#354c5d","#75a0a9"],
  campus:["#544844","#67594c","#b49b71"],research:["#354050","#414d60","#8296bb"],
- studio:["#363546","#484456","#ae8599"],field:["#455648","#576751","#8c9f69"],
+ studio:["#142e29","#24463c","#50b380"],field:["#455648","#576751","#8c9f69"],
  music:["#574443","#69534c","#c69576"]
 };
 const mapWidth=704,mapHeight=368;

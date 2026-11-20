@@ -74,3 +74,10 @@ header nav{flex-wrap:wrap}
 #handoff input,#handoff textarea{display:block;width:100%}
 #handoff p{font-size:.88rem}#handoff button,#conversation button{padding:.4rem .6rem}
 .chat-choices{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}.chat-choices button{font-size:.85rem}
+#work{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:1.2rem;align-items:start}#work>small,#work>h2{grid-column:1/-1}#work h2{margin-bottom:.5rem}
+#work details,#work details[open]{padding:0 0 .85rem;border:1px solid #354653;border-radius:.5rem;background:#111e29;overflow:hidden}
+#work summary{list-style:none;padding:0 .85rem;font-size:1.35rem}#work summary::-webkit-details-marker{display:none}
+.cover{width:calc(100% + 1.7rem);margin:0 -.85rem .6rem;height:auto;display:block;image-rendering:pixelated}
+#work summary i{float:none;display:block;padding:.2rem 0;font-size:.78rem}
+#work details p,#work .process-sample,#work .exhibit-actions{margin-inline:.85rem}
+#work summary:hover{transform:none}

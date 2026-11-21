@@ -32,6 +32,20 @@ for(const h of honors){
    }figure.append(image,caption);desc.append(figure);
  }
  if(!h.image){const note=document.createElement("p");note.textContent="Explore this activity in the game’s Awards gallery.";desc.append(note);}
+ if(h.image==="par"){
+   const link=document.createElement("a");link.href="#par-plan";link.textContent="Explore the research plan and focus groups";
+   link.onclick=()=>{document.querySelector("#par-plan").open=true;};desc.append(link);
+ }
+ if(h.image==="verinews"){
+   const exhibit=document.createElement("section");
+   exhibit.innerHTML='<img src="media/events/dip.webp" width="180" alt="Digital Innovations for Peace" loading="lazy"><figure class="event-video"><video controls playsinline preload="none" poster="media/events/verinews-poster.jpg" aria-label="VeriNews hackathon retrospective" src="media/events/verinews.mp4"></video><figcaption>The power of teamwork · Digital Innovations for Peace</figcaption></figure><details><summary>Explore the 13 prototype screens</summary><div class="event-photos"></div></details>';
+   const gallery=exhibit.querySelector(".event-photos");
+   for(let i=1;i<=13;i++){
+     const a=document.createElement("a"),img=document.createElement("img");
+     a.href="media/events/verinews-"+i+".webp";img.src=a.href;img.loading="lazy";img.alt="Open VeriNews prototype screen "+i;a.append(img);gallery.append(a);
+   }
+   desc.append(exhibit);
+ }
  highlights.append(li);
 }
 const activityStories = [

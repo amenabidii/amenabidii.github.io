@@ -73,7 +73,7 @@ function paint(){
  button.textContent=item?"Inspect · "+(item[5]||item[0]):"Inspect nearby object";
 }
 hero.onload=paint;
-setInterval(()=>orientationTick(.06,performance.now()),60);
+setInterval(()=>{tickRoamers();orientationTick(.06,performance.now());},60);
 setInterval(()=>{if((bachActive||guitarActive||room==="field"||room==="memory3")&&!document.hidden)paint();},180);
 function tone(freq,duration,volume,type="triangle",delay=0,destination=context?.destination){
  if(muted||document.hidden||!context||context.state!=="running")return;

@@ -12,17 +12,27 @@ function drawPerformance(){
  const time=performance.now()/1000;
  if(room==="field"||room==="memory3"){
    for(const [i,name] of ["Dhiya","Ranya"].entries()){
-     const px=260+i*90+30*Math.sin(time*.64+i),py=185+13*Math.sin(time*.91+i*2);
+     const pos=roamingCharacters.get(room+"/"+name);if(!pos)continue;
+     const px=pos.x,py=pos.y;
      stagePerson(px,py,i?"#c693df":"#d69b62",Math.round(Math.sin(time*3+i)));
      sceneLabel(name,px,py-28);
    }
  }
  if(room==="music"&&guitarActive){
-   const dancer=236+12*Math.sin(time*2),bull=279+15*Math.cos(time*2);
-   stagePerson(dancer,179,"#d83c50",Math.round(2*Math.sin(time*5)));
-   ctx.fillStyle="#da3650";ctx.beginPath();ctx.moveTo(dancer,163);ctx.lineTo(dancer-11,179);ctx.lineTo(dancer+12,179);ctx.fill();
-   block(bull,171,22,10,"#3b292a");block(bull-6,168,9,9,"#352729");block(bull-8,165,3,5,"#f4dab3");block(bull,165,2,4,"#f4dab3");
-   for(const offset of [1,15])block(bull+offset,180,4,5+Math.round(2*Math.sin(time*6+offset)),"#231e26");
+   const dance=roamingCharacters.get(room+"/dancer"),animal=roamingCharacters.get(room+"/bull");
+   if(dance){
+     const {x:px,y:py}=dance;stagePerson(px,py,"#d83c50",Math.round(2*Math.sin(time*5)));
+     ctx.fillStyle="#da3650";ctx.beginPath();ctx.moveTo(px,py-16);ctx.lineTo(px-11,py);ctx.lineTo(px+12,py);ctx.fill();
+   }
+   if(animal){
+     const {x:px,y:py}=animal;
+     block(px,py-9,22,10,"#3b292a");block(px-6,py-12,9,9,"#352729");block(px-8,py-15,3,5,"#f4dab3");block(px,py-15,2,4,"#f4dab3");
+     for(const offset of [1,15])block(px+offset,py,4,5+Math.round(2*Math.sin(time*6+offset)),"#231e26");
+   }
+   const beat=Math.round(2*Math.sin(time*11));
+   stagePerson(328,239,"#71aaad",beat);block(321,230,15,13,"#aa7350");block(325,231,7,4,"#67432e");
+   stagePerson(368,235,"#c49068",-beat);block(362,224,10,10,"#bd844b");block(370,223,16,3,"#e1bd84");
+   sceneLabel("Cajón",328,210);sceneLabel("Bass",368,206);
 
  }
  if(room!=="memory6")return;

@@ -34,8 +34,8 @@ function orientationTick(dt,now){
      if(distance>19){tx=leaderX;ty=leaderY;}
      leaderX=px;leaderY=py;
    }else if(person.mode==="wander"){
-     tx=person.homeX+18*Math.sin(now/1900+person.phase);
-     ty=person.homeY+10*Math.cos(now/2200+person.phase);
+     const pos=roam(item[5],px,py,dt,38+person.phase);
+     item[1]=pos.x-5;item[2]=pos.y-12;continue;
    }
    const dx=tx-px,dy=ty-py,step=Math.min(1,dt*125/(Math.hypot(dx,dy)||1));
    if(canStand(px+dx*step,py))item[1]+=dx*step;

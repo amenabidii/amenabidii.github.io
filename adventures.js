@@ -7,7 +7,16 @@ const episodes=[
  [["tent","Listening circle","Gather the field team’s observations."],["map","Advocacy table","Bring the observations into a petition."]],
  [["notice","Welcome board","Identify resources for the new cohort."],["map","Orientation route","Guide the group through its first stops."]],
  [["terminal","Market screen","Review the simulated market."],["chart","Closing bell","Read the portfolio after ten sessions."]],
- [["shelf","Score library","Select the concert score."],["piano","Campus stage","Play the closing cadence."]]
+ [["shelf","Score library","Select the concert score."],["piano","Campus stage","Play the closing cadence."]],
+ [["table", "Profile desk", "Pick an accomplishment to introduce yourself with."], ["notice", "Practice microphone", "Give your introduction."]],
+ [["map", "Reception desk", "Check the reception programme."], ["desk", "Photo spot", "Join the ambassador for a photograph."]],
+ [["table", "Project table", "Meet the J2R group."], ["notice", "Certificate desk", "Collect the participation certificate."]],
+ [["map", "Centre entrance", "Look for a barrier on the voter route."], ["desk", "Observer desk", "Record the location and impact."]],
+ [["table", "Facility map", "Trace a visitor’s route through the building."], ["notice", "Report desk", "Add an observation to the assessment."]],
+ [["map", "Partner list", "Identify a potential NGO partner."], ["desk", "Outreach desk", "Connect the partner to the symposium goals."]],
+ [["table", "Guest list", "Find the newest cohort on the list."], ["notice", "Welcome desk", "Guide arriving scholars into the dinner."]],
+ [["map", "Packing table", "Find the groups assembling family packs."], ["desk", "Performance cue", "Join Musicana for the event."]],
+ [["table", "Festival schedule", "Visit a discussion on creativity and technology."], ["notice", "Stage call", "Meet Musicana for the performance."]]
 ];
 const storyProgress=new Map(),stampBook=new Set();
 let lightsLow=false,plantWatered=false,benchTempo=false;
@@ -36,9 +45,9 @@ honors.forEach((h,id)=>{
    ["plant",21,82,25,38],["bench",221,230,66,26],["shelf",510,79,68,54]
  ];
  const sibling=honors.slice(0,id).filter(other=>other.room===theme).length;
- furniture[theme].push(portal(id,170+sibling*194,225));
+ if(id<7)furniture[theme].push(portal(id,170+sibling*194,225));
  // The awards gallery also offers a direct portal into every story.
- furniture.atrium.push(portal(id,35+id*80,170+(id%2)*55));
+ furniture.atrium.push(portal(id,19+(id%8)*76,202+Math.floor(id/8)*56));
 });
 furniture.music.push(["desk",423,212,76,45,"Writing desk","Browse the project shelf."],["notice",215,83,51,32,"Team photograph","Twelve young researchers in Kasserine, including Dhiya, Ranya and Amen."],["map",288,242,50,30,"Door atlas","North wall, left to right: projects, research, campus, hackathon and awards."]);
 rooms.memory6[1]="An imagined Musicana concert. Approach the piano to play a synth arrangement of Oblivion with the band, then explore the score library.";
@@ -121,7 +130,16 @@ const memoryChoices=[
  ["The team has listened to young residents. How should the findings travel next?",["Publish their private notes","Bring shared priorities to local authorities"],1,"Use the shared priorities to build the climate petition together."],
  ["A new student is lost on orientation day. What can the welcome group offer?",["A guided route to campus resources","The next exam ranking"],0,"The peer moderators helped students find resources and settle into AUC."],
  ["A virtual EGP 250,000 portfolio gains 22%. What is its closing value?",["EGP 272,000","EGP 305,000"],1,"EGP 250,000 × 1.22 = EGP 305,000 in the simulation."],
- ["The final campus performance is starting. Where does Amen take his place?",["At the piano","At the drum kit"],0,"Amen plays piano with AUC Musicana."]
+ ["The final campus performance is starting. Where does Amen take his place?",["At the piano","At the drum kit"],0,"Amen plays piano with AUC Musicana."],
+ ["Which introduction gives a listener evidence?", ["A specific project and what I contributed", "A list of adjectives"], 0, "A specific project and what I contributed."],
+ ["Who recognized Amen in Egypt?", ["A trading competition judge", "The Tunisian ambassador"], 1, "The Tunisian ambassador."],
+ ["What does the J2R certificate document?", ["Participation", "A national ranking"], 0, "Participation."],
+ ["Which observation can an organizer act on?", ["The building looks busy", "The entrance has steps and no accessible route"], 1, "The entrance has steps and no accessible route."],
+ ["What belongs in the assessment?", ["A documented barrier and a practical recommendation", "An assumption about every visitor"], 0, "A documented barrier and a practical recommendation."],
+ ["Which invitation helps a partner decide?", ["Send only the date", "Explain the purpose and the support needed"], 1, "Explain the purpose and the support needed."],
+ ["How many incoming scholars attended?", ["55", "15"], 0, "55."],
+ ["How did Amen contribute through Musicana?", ["Conducted the orchestra", "Played piano"], 1, "Played piano."],
+ ["Which two activities were part of Amen’s day?", ["A Musicana performance and festival talks", "A trading session and exam"], 0, "A Musicana performance and festival talks."]
 ];
 function finishMemory(id){
  if(stampBook.has(id)){notifyWorld(honors[id].body);return;}

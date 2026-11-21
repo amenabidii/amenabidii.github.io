@@ -49,7 +49,7 @@ function playSong(name){
        }
      }
      while(index<score.notes.length){
-       const [tick,pitch,length,strength]=score.notes[index];
+       const [tick,pitch,length,strength,voice]=score.notes[index];
        const time=start+tick/100;
        if(time>now+.16)break;
        index++;
@@ -58,6 +58,30 @@ function playSong(name){
        const delay=Math.max(0,time-now);
        const duration=length/100+.04;
        const level=.07*strength/100;
+       if(voice){
+         if(voice==="cymbal"){
+           const buffer=context.createBuffer(1,Math.ceil(context.sampleRate*duration),context.sampleRate);
+           const samples=buffer.getChannelData(0);
+           for(let i=0;i<samples.length;i++)samples[i]=(Math.random()*2-1)*Math.exp(-7*i/samples.length);
+           const source=context.createBufferSource(),filter=context.createBiquadFilter(),gain=context.createGain();
+           source.buffer=buffer;filter.type="highpass";filter.frequency.value=4500;gain.gain.value=level;
+           source.connect(filter).connect(gain).connect(bus);source.start(now+delay);
+           source.onended=()=>{source.disconnect();filter.disconnect();gain.disconnect();};
+         }else{
+           const sustained=["strings","horn","bass"].includes(voice);
+           const osc=context.createOscillator(),gain=context.createGain(),onset=context.currentTime+delay;
+           osc.type=voice==="tom"||voice==="bass"?"sine":"triangle";
+           osc.frequency.setValueAtTime(frequency,onset);
+           if(voice==="tom")osc.frequency.exponentialRampToValueAtTime(frequency*.53,onset+duration);
+           gain.gain.setValueAtTime(.0001,onset);
+           gain.gain.exponentialRampToValueAtTime(level,onset+(sustained?.09:.008));
+           if(sustained)gain.gain.setValueAtTime(level*.82,onset+duration-.1);
+           gain.gain.exponentialRampToValueAtTime(.0001,onset+duration);
+           osc.connect(gain).connect(bus);osc.start(onset);osc.stop(onset+duration);
+           osc.onended=()=>{osc.disconnect();gain.disconnect();};
+         }
+         continue;
+       }
        tone(frequency,duration,level,"triangle",delay,bus);
        if(name==="flamenco"){
          tone(frequency*2,Math.min(.11,duration),level*.28,"sine",delay,bus);

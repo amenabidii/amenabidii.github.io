@@ -46,7 +46,7 @@ honors.forEach((h,id)=>{
  furniture.atrium.push(portal(id,19+(id%8)*76,202+Math.floor(id/8)*56));
 });
 furniture.music.push(["desk",423,212,76,45,"Writing desk","Browse the project shelf."],["notice",215,83,51,32,"Team photograph","Twelve young researchers in Kasserine, including Dhiya, Ranya and Amen."],["map",288,242,50,30,"Door atlas","North wall, left to right: projects, research, campus, hackathon and awards."]);
-rooms.memory6[1]="An imagined Musicana concert. Approach the piano to play the synth arrangement of Oblivion, then explore the score library.";
+rooms.memory6[1]="An imagined Musicana concert. Approach the piano to play the five-bar ensemble opening of Oblivion, then explore the score library.";
 rooms.music[0]="Amen’s bedroom";
 rooms.music[1]="Start at the north wall: five doors open into my work, research and community. Inspect the room to find a score, a journal and a team photograph.";
 function drawPortal(item){

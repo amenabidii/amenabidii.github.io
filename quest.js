@@ -8,36 +8,14 @@ const scores={
  music:[490,"sine",[55,62,67,70,0,65,62,0]],
  queue:[175,"triangle",[43,43,0,50,46,0,49,48]]
 };
-// Bella chorus harmony in open guitar voicings: Dm, Am, E7, Am.
-const bellaChords=[[50,57,62,65],[45,52,57,60,64],[40,47,50,56,59,64],[45,52,57,60,64]];
-let bachActive=false,guitarActive=false,guitarBus=null;
+let bachActive=false,guitarActive=false;
 function music(){
  clearTimeout(musicTimer);melodyStep=0;
- syncPiano(bachActive&&room!=="memory6"&&!muted&&!document.hidden&&started);
- guitarBus?.disconnect();guitarBus=null;
- if(guitarActive && context && !muted && !document.hidden){
-   guitarBus=context.createGain();guitarBus.connect(context.destination);
- }
+ const audible=started&&!muted&&!document.hidden;
+ syncPiano(audible&&bachActive&&room!=="memory6");
+ playSong(audible?(guitarActive?"bella":bachActive&&room==="memory6"?"oblivion":null):null);
  function next(){
-   if(muted||document.hidden||!started)return;
-   if(bachActive){
-     if(room!=="memory6")return;
-     const chords=[[60,64,67],[57,60,64],[52,55,59],[50,54,57],[60,64,67],[57,60,64],[50,54,57],[59,62,66]];
-     const beat=melodyStep%8,chord=chords[Math.floor(melodyStep/8)%chords.length];
-     const hz=n=>440*2**((n-69)/12);
-     tone(hz(chord[[0,1,2,1,0,2,1,2][beat]]+12),.38,.055);
-     if(beat%4===0){tone(hz(chord[0]-12),.75,.085,"sine");tone(66,.13,.09,"sine");}
-     if(beat%4===2){tone(175,.07,.03,"triangle");tone(hz(chord[2]),.36,.023,"sawtooth");}
-     melodyStep++;musicTimer=setTimeout(next,224);return;
-   }
-   if(guitarActive){
-     if(!guitarBus)return;
-     const beat=melodyStep%8,chord=bellaChords[Math.floor(melodyStep/8)%4];
-     const strings=beat===0?[chord[0]]:beat%2?chord.slice(-3).reverse():chord;
-     strings.forEach((pitch,i)=>tone(440*2**((pitch-69)/12),beat%2?.25:.50,.046,"triangle",i*(beat%2?.012:.022),guitarBus));
-     if(beat===3||beat===6)tone(185,.045,.032,"triangle",0,guitarBus);
-     melodyStep++;musicTimer=setTimeout(next,[265,135,130,260,260,135,130,265][beat]);return;
-   }
+   if(!audible||bachActive||guitarActive)return;
    const [pulse,voice,notes]=scores[room],pitch=notes[melodyStep%notes.length];
    if(pitch)tone(440*2**((pitch-69)/12),pulse*.00091,voice==="square"?.014:.045,voice);
    melodyStep++;musicTimer=setTimeout(next,pulse);

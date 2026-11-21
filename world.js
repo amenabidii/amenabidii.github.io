@@ -64,11 +64,9 @@ function paint(){
    const atGuitar=item?.[0]==="guitar";
    if(atPiano!==bachActive || atGuitar!==guitarActive){
      bachActive=atPiano;guitarActive=atGuitar;music();
-     if(atGuitar && !muted && "speechSynthesis" in window){
-       const cheer=new SpeechSynthesisUtterance("¡Olé!");cheer.lang="es-ES";window.speechSynthesis.speak(cheer);
-     }
+
    }
-   notifyWorld(item ? (item[0]==="piano"?(room==="memory6"?"♪ Oblivion · M83":"♪ G Minor Bach · Piano Tiles 2"):item[0]==="guitar"?"¡Olé! · Amen also plays guitar":(item[5]||item[0])+" nearby")+" · Press E to inspect" : "");
+   notifyWorld(item ? (item[0]==="piano"?(room==="memory6"?"♪ Oblivion · M83 feat. Susanne Sundfør":"♪ G Minor Bach · Piano Tiles 2"):item[0]==="guitar"?"Bella · GIMS · Amen also plays guitar":(item[5]||item[0])+" nearby")+" · Press E to inspect" : "");
  }
  button.hidden=!started||!item;
  button.disabled=!item;

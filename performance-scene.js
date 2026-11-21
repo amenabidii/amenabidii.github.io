@@ -23,7 +23,7 @@ function drawPerformance(){
    ctx.fillStyle="#da3650";ctx.beginPath();ctx.moveTo(dancer,163);ctx.lineTo(dancer-11,179);ctx.lineTo(dancer+12,179);ctx.fill();
    block(bull,171,22,10,"#3b292a");block(bull-6,168,9,9,"#352729");block(bull-8,165,3,5,"#f4dab3");block(bull,165,2,4,"#f4dab3");
    for(const offset of [1,15])block(bull+offset,180,4,5+Math.round(2*Math.sin(time*6+offset)),"#231e26");
-   sceneLabel("¡Olé!",dancer,148);
+
  }
  if(room!=="memory6")return;
  const live=bachActive,beat=live?Math.round(2*Math.sin(time*9)):0;

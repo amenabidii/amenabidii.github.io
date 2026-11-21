@@ -23,10 +23,12 @@ function music(){
  next();
 }
 const evidence=new Set();
+let hiringAttempt=0;
+const barriers=[["WASTA","A referral moved ahead of the open shortlist."],["FILTER","An automated screen missed your experience."],["SILENCE","Recruiting closed the vacancy without an update."],["EXPERIENCE","An entry-level role asked for prior industry experience."]];
 let offer=false, agents=[],checkpoint=45, catchGrace=0;
 function resetQueue(){
  x=checkpoint;y=186;
- agents=[{x:226,y:81,pace:34},{x:340,y:255,pace:39},{x:480,y:102,pace:34}];
+ agents=[{x:226,y:81,pace:34},{x:340,y:255,pace:39},{x:480,y:102,pace:34},{x:528,y:228,pace:30}].map((agent,i)=>({...agent,barrier:barriers[(i+hiringAttempt)%barriers.length]}));
  catchGrace=performance.now()+1400;
 }
 function objective(){
@@ -40,17 +42,17 @@ function award(item){
  if(room==="work"&&item[0]==="printer"){evidence.add("project");notifyWorld("Project evidence collected. Next: Studio → green console.");}
  if(room==="studio"&&item[0]==="terminal"){evidence.add("debug");notifyWorld("Build verified. Bring both proofs through the Hiring door.");}
  if(room==="queue"&&item[5]==="Interview desk"){
-   if(evidence.size===2){offer=true;agents=[];notifyWorld("Offer signed! You helped Amen secure the software position.");tone(659,.5,.12);}
+   if(evidence.size===2){offer=true;agents=[];finishMission();notifyWorld("Offer signed! You helped Amen secure the software position.");tone(659,.5,.12);}
    else notifyWorld("The interview needs both proofs. "+objective()+".");
  }
  updateQuestLabel();
 }
 function chase(dt,now){
- if(room!=="queue"||offer||document.hidden)return;
+ if(room!=="queue"||offer||document.hidden||!document.querySelector("#memory-choice").hidden)return;
  if(x>mapWidth/2&&checkpoint===45){checkpoint=mapWidth/2+4;notifyWorld("Shortlisted! Retry checkpoint reached.");}
  for(const agent of agents){
    const dist=Math.hypot(x-agent.x,y-agent.y);
-   if(dist<13&&now>catchGrace){resetQueue();notifyWorld("A wasta referral jumped the line. Try another aisle — your evidence is safe.");return;}
+   if(dist<13&&now>catchGrace){hiringAttempt++;showGamePrompt("Run lost · "+agent.barrier[0],agent.barrier[1]+" Amen is researching access to work. How would you get your skills seen without wasta? Your collected proofs carry over.","Retry from checkpoint (E)",resetQueue);return;}
    if(!dist)continue;
    const dx=(x-agent.x)*agent.pace*dt/dist,dy=(y-agent.y)*agent.pace*dt/dist;
    if(canStand(agent.x+dx,agent.y))agent.x+=dx;
@@ -70,7 +72,7 @@ function drawAtmosphere(){
    for(const a of agents){
      block(a.x-6,a.y-18,12,13,"#69394d");block(a.x-4,a.y-26,8,8,"#d0a481");block(a.x-6,a.y-28,11,4,"#322b39");
      block(a.x-5,a.y-6,3,6,"#1a2531");block(a.x+2,a.y-6,3,6,"#1a2531");block(a.x+5,a.y-10,7,6,"#af754f");
-     ctx.font="7px monospace";ctx.textAlign="center";ctx.fillStyle="#ffd6ae";ctx.fillText("WASTA",a.x,a.y-31);
+     ctx.font="7px monospace";ctx.textAlign="center";ctx.fillStyle="#ffd6ae";ctx.fillText(a.barrier[0],a.x,a.y-31);
    }
  }
 }

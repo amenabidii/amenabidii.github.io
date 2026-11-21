@@ -11,7 +11,7 @@ let roomAction="",currentItem=null;
 let cameraX=0,cameraY=0;
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 const notice=document.querySelector("#world-toast");
-function notifyWorld(text){notice.textContent=text;notice.hidden=!text;}
+function notifyWorld(text){notice.dataset.kind=/evidence|verified|shortlisted|signed/i.test(text)?"reward":/nearby|inspect/i.test(text)?"hint":"story";notice.textContent=text;notice.hidden=!text;}
 
 function block(a,b,w,h,color){ctx.fillStyle=color;ctx.fillRect(a,b,w,h);}
 function door(centerX,label,accent){
@@ -95,7 +95,7 @@ function enter(id,back=false){
  const link=document.querySelector("#room-link");link.hidden=false;link.href=url;
  link.onclick=()=>{const target=document.querySelector(url);if(target?.tagName==="DETAILS")target.open=true;};
  updateQuestLabel();music();
- tone(523,.22,.09);paint();
+ tone(523,.22,.09);paint();briefRoom();
 }
 const directions={ArrowUp:"up",w:"up",ArrowLeft:"left",a:"left",ArrowDown:"down",s:"down",ArrowRight:"right",d:"right"};
 const held=new Map();
@@ -123,6 +123,7 @@ function nearby(){
 function inspect(){
  const item=nearby();if(!item)return;
  if(item[0]==="door"){confirmPortal(item,item[7]);return;}
+ recordFind(item);
  if(inspectSoundcheck(item))return;
  if(orientationAction(item)){paint();return;}
  joinTask(item);
@@ -161,7 +162,7 @@ function walk(now){
    paint();
  }
  if(room==="queue"&&!offer){chase(dt,now);paint();}
- if(held.size||stick||(room==="queue"&&!offer&&!document.hidden))frame=requestAnimationFrame(walk);
+ if(held.size||stick||(room==="queue"&&!offer&&!document.hidden&&document.querySelector("#memory-choice").hidden))frame=requestAnimationFrame(walk);
  else {frame=0;previous=0;}
 }
 function hold(key,dir){
@@ -172,7 +173,7 @@ function hold(key,dir){
 document.querySelector("#world-start").onclick=()=>{
  started=true;document.querySelector("#world-intro").hidden=true;document.querySelector(".world-panel").hidden=false;
  try{context=new AudioContext();context.resume().catch(()=>{});}catch{}
- enter("music");notifyWorld("Walk up to an object and press E to inspect it. On touchscreens, tap Inspect.");stage.focus({preventScroll:true});
+ enter("music");
 };
 document.querySelector(".world").addEventListener("keydown",e=>{
  if(!document.querySelector("#memory-choice").hidden)return;

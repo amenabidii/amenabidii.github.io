@@ -144,7 +144,7 @@ function finishMemory(id){
   const button=document.createElement("button");button.textContent=value;
   button.onclick=()=>{
    if(i!==correct){feedback.textContent=hint;return;}
-   stampBook.add(id);storyProgress.set(id,2);panel.hidden=true;
+   finishMission();stampBook.add(id);storyProgress.set(id,2);panel.hidden=true;
    if(id===6)[392,466,587].forEach((pitch,j)=>setTimeout(()=>tone(pitch,.3,.07),j*130));
    else tone(659,.3,.08);
    paint();notifyWorld(honors[id].body+" · Journal "+stampBook.size+"/"+honors.length);

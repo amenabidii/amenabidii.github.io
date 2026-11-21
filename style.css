@@ -147,3 +147,10 @@ header{position:sticky;top:0;z-index:12;background:#0a131c;transition:transform 
 header.header-away:not(:focus-within){transform:translateY(-105%)}
 section,details{scroll-margin-top:7rem}
 .speed-setting{display:flex;align-items:center;gap:.7rem;color:#bae7dd;font:14px monospace;margin:.65rem 0}.speed-setting input{accent-color:#67ead4;max-width:46%}
+#mission-hud{position:absolute;right:.35rem;top:.35rem;background:#101925ed;color:#9af4e0;padding:.2em .5em;font:clamp(9px,1.4vw,12px) monospace;pointer-events:none}
+#mission-party{position:absolute;inset:30% auto auto 50%;transform:translateX(-50%);background:#251d43ed;color:#ffe9a4;border:1px solid #cf92ff;border-radius:.6rem;padding:.6rem;text-align:center;pointer-events:none;min-width:55%}
+#mission-party div{font-size:1.7rem;animation:mission-dance .36s infinite alternate}
+@keyframes mission-dance{to{transform:translateY(-4px) rotate(3deg)}}
+@media(prefers-reduced-motion:reduce){#mission-party div{animation:none}}
+#world-toast{border-left:3px solid #78e5dc}#memory-choice strong{color:#ffd993}
+#world-toast[data-kind=reward]{color:#ffe89b;border-color:#e5b453}#world-toast[data-kind=story]{color:#f0d9ff;border-color:#c79bf1}

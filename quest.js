@@ -13,7 +13,13 @@ function music(){
  clearTimeout(musicTimer);melodyStep=0;
  const audible=started&&!muted&&!document.hidden;
  syncPiano(audible&&bachActive&&room!=="memory6");
- playSong(audible?(guitarActive?"flamenco":bachActive&&room==="memory6"?"oblivion-film":null):null);
+ const scoreDock=document.querySelector("#stage-score"),showScore=audible&&bachActive&&room==="memory6";
+ if(showScore && scoreDock.hidden){
+   const player=document.createElement("iframe");player.title="Oblivion · MuseScore arrangement";player.src="https://musescore.com/user/12581661/scores/4094951/embed";
+   player.width="100%";player.height="200";player.allow="autoplay; fullscreen";scoreDock.lastElementChild.replaceChildren(player);
+ }else if(!showScore&&!scoreDock.hidden)scoreDock.lastElementChild.replaceChildren();
+ scoreDock.hidden=!showScore;
+ playSong(audible&&guitarActive?"flamenco":null);
  function next(){
    if(!audible||bachActive||guitarActive)return;
    const [pulse,voice,notes]=scores[room],pitch=notes[melodyStep%notes.length];

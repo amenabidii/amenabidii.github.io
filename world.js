@@ -50,7 +50,7 @@ function paint(){
  let drawn=false;
  for(const item of [...furniture[room]].sort((a,b)=>(a[2]+a[4])-(b[2]+b[4]))){
    if(!playing&&!drawn&&item[2]+item[4]>y){drawHero();drawn=true;}
-   if(item[0]==="portal")drawPortal(item);else drawFurniture(item);
+   if(item[0]==="portal")drawPortal(item);else if(["songnote","mixer"].includes(item[0]))drawSoundcheck(item);else drawFurniture(item);
  }
  if(!drawn)drawHero();
  drawTeam();drawOrientationPeople();drawPerformance();
@@ -123,6 +123,7 @@ function nearby(){
 function inspect(){
  const item=nearby();if(!item)return;
  if(item[0]==="door"){confirmPortal(item,item[7]);return;}
+ if(inspectSoundcheck(item))return;
  if(orientationAction(item)){paint();return;}
  joinTask(item);
  if(exploreItem(item)){paint();return;}

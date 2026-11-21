@@ -162,18 +162,18 @@ function finishMemory(id){
  const leave=document.createElement("button");leave.textContent="Return to room";leave.onclick=()=>{panel.hidden=true;stage.focus({preventScroll:true});};panel.append(feedback,leave);panel.querySelector("button").focus();
 }
 
-function confirmPortal(item){
+function confirmPortal(item,destination="memory"+item[7]){
  const panel=document.querySelector("#memory-choice");
  clearMovement();
  const title=document.createElement("strong"),accept=document.createElement("button"),cancel=document.createElement("button");
  title.textContent="Enter "+item[5]+"?";accept.textContent="Enter room (E)";cancel.textContent="Stay here (Esc)";
  function close(){panel.hidden=true;panel.onkeydown=null;stage.focus({preventScroll:true});}
- accept.onclick=()=>{close();enter("memory"+item[7]);};
+ accept.onclick=()=>{close();enter(destination);};
  cancel.onclick=close;
  panel.onkeydown=e=>{
-   if(!["e","escape"].includes(e.key.toLowerCase()))return;
+   if(e.code!=="KeyE"&&!["e","escape"].includes(e.key.toLowerCase()))return;
    e.preventDefault();e.stopPropagation();
-   if(!e.repeat)(e.key.toLowerCase()==="e"?accept:cancel).click();
+   if(!e.repeat)(e.key==="Escape"?cancel:accept).click();
  };
  panel.replaceChildren(title,accept,cancel);panel.hidden=false;accept.focus({preventScroll:true});
 }

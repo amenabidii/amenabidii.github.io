@@ -70,7 +70,7 @@ function paint(){
  }
  button.hidden=!started||!item;
  button.disabled=!item;
- button.textContent=item?"Inspect · "+(item[5]||item[0]):"Inspect nearby object";
+ button.textContent=item?(item[0]==="door"?"Enter · ":"Inspect · ")+(item[5]||item[0]):"Inspect nearby object";
 }
 hero.onload=paint;
 setInterval(()=>{tickRoamers();orientationTick(.06,performance.now());},60);
@@ -102,7 +102,14 @@ const held=new Map();
 let frame=0,previous=0,stride=0;
 let stick=null;
 function clearMovement(){stick=null;held.clear();cancelAnimationFrame(frame);frame=0;previous=0;paint();}
+const doorTargets=new Map();
 function nearby(){
+ const front=doorsHere().find(([cx])=>Math.abs(x-cx)<24 && y<=77);
+ if(front){
+   const [cx,label,destination]=front,key=room+"/"+destination+"/"+cx;
+   if(!doorTargets.has(key))doorTargets.set(key,["door",cx-16,3,32,44,label,"",destination]);
+   return doorTargets.get(key);
+ }
  let closest=null,best=23;
  const targets=room==="memory4"?[...orientationPeople.map(p=>p.item),dancePad,...furniture[room]]:furniture[room];
  for(const item of targets){
@@ -115,6 +122,7 @@ function nearby(){
 }
 function inspect(){
  const item=nearby();if(!item)return;
+ if(item[0]==="door"){confirmPortal(item,item[7]);return;}
  if(orientationAction(item)){paint();return;}
  joinTask(item);
  if(exploreItem(item)){paint();return;}
@@ -164,12 +172,12 @@ document.querySelector("#world-start").onclick=()=>{
  try{context=new AudioContext();context.resume().catch(()=>{});}catch{}
  enter("music");notifyWorld("Walk up to an object and press E to inspect it. On touchscreens, tap Inspect.");stage.focus({preventScroll:true});
 };
-stage.onkeydown=e=>{
+document.querySelector(".world").addEventListener("keydown",e=>{
  if(!document.querySelector("#memory-choice").hidden)return;
- if(started&&e.key.toLowerCase()==="e"){e.preventDefault();if(!e.repeat)inspect();return;}
+ if(started&&(e.code==="KeyE"||e.key.toLowerCase()==="e")){e.preventDefault();if(!e.repeat)inspect();return;}
  const dir=directions[e.key]||directions[e.key.toLowerCase()];
  if(started&&dir){e.preventDefault();hold(e.code,dir);}
-};
+});
 window.addEventListener("keyup",e=>held.delete(e.code));
 stage.addEventListener("blur",clearMovement);
 window.addEventListener("blur",clearMovement);

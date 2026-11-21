@@ -65,3 +65,13 @@ for(const story of activityStories){
   link.href="https://www.linkedin.com/feed/update/urn:li:"+ (story.post==="7429160337079345152"?"ugcPost":"activity")+":"+story.post+"/";
   details.append(summary,p,link);row.lastElementChild.append(details);
 }
+const moreHonors=document.createElement("button");
+moreHonors.type="button";moreHonors.className="honors-toggle";
+moreHonors.setAttribute("aria-controls",highlights.id);
+function showAllHonors(expanded){
+  Array.from(highlights.children).slice(5).forEach(row=>row.hidden=!expanded);
+  moreHonors.setAttribute("aria-expanded",String(expanded));
+  moreHonors.textContent=expanded?"Show fewer achievements":"Show all "+highlights.children.length+" achievements";
+}
+moreHonors.onclick=()=>showAllHonors(moreHonors.getAttribute("aria-expanded")!=="true");
+highlights.after(moreHonors);showAllHonors(false);

@@ -13,10 +13,6 @@ const episodes=[
  [["table", "Project table", "Meet the J2R group."], ["notice", "Certificate desk", "Collect the participation certificate."]],
  [["map", "Centre entrance", "Look for a barrier on the voter route."], ["desk", "Observer desk", "Record the location and impact."]],
  [["table", "Facility map", "Trace a visitor’s route through the building."], ["notice", "Report desk", "Add an observation to the assessment."]],
- [["map", "Partner list", "Identify a potential NGO partner."], ["desk", "Outreach desk", "Connect the partner to the symposium goals."]],
- [["table", "Guest list", "Find the newest cohort on the list."], ["notice", "Welcome desk", "Guide arriving scholars into the dinner."]],
- [["map", "Packing table", "Find the groups assembling family packs."], ["desk", "Performance cue", "Join Musicana for the event."]],
- [["table", "Festival schedule", "Visit a discussion on creativity and technology."], ["notice", "Stage call", "Meet Musicana for the performance."]]
 ];
 const storyProgress=new Map(),stampBook=new Set();
 let lightsLow=false,plantWatered=false,benchTempo=false;
@@ -136,10 +132,6 @@ const memoryChoices=[
  ["What does the J2R certificate document?", ["Participation", "A national ranking"], 0, "Participation."],
  ["Which observation can an organizer act on?", ["The building looks busy", "The entrance has steps and no accessible route"], 1, "The entrance has steps and no accessible route."],
  ["What belongs in the assessment?", ["A documented barrier and a practical recommendation", "An assumption about every visitor"], 0, "A documented barrier and a practical recommendation."],
- ["Which invitation helps a partner decide?", ["Send only the date", "Explain the purpose and the support needed"], 1, "Explain the purpose and the support needed."],
- ["How many incoming scholars attended?", ["55", "15"], 0, "55."],
- ["How did Amen contribute through Musicana?", ["Conducted the orchestra", "Played piano"], 1, "Played piano."],
- ["Which two activities were part of Amen’s day?", ["A Musicana performance and festival talks", "A trading session and exam"], 0, "A Musicana performance and festival talks."]
 ];
 function finishMemory(id){
  if(stampBook.has(id)){notifyWorld(honors[id].body);return;}

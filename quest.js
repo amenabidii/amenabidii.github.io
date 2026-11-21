@@ -13,7 +13,7 @@ function music(){
  clearTimeout(musicTimer);melodyStep=0;
  const audible=started&&!muted&&!document.hidden;
  syncPiano(audible&&bachActive&&room!=="memory6");
- playSong(audible?(guitarActive?"bella":bachActive&&room==="memory6"?"oblivion":null):null);
+ playSong(audible?(guitarActive?"flamenco":bachActive&&room==="memory6"?"oblivion-film":null):null);
  function next(){
    if(!audible||bachActive||guitarActive)return;
    const [pulse,voice,notes]=scores[room],pitch=notes[melodyStep%notes.length];

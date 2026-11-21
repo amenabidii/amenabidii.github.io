@@ -21,11 +21,8 @@ function playSong(name){
  }
  songScores.get(name).then(score=>{
    if(songSession!==session)return;
-   // First sung hook of the official Bella clip, at 00:52.98.
-   const cue=name==="bella"?5298:0;
-   const start=context.currentTime+.055-cue/100;
-   let index=score.notes.findIndex(note=>note[0]>=cue);
-   if(index<0)return;
+   const start=context.currentTime+.055;
+   let index=0;
    let percussionStep=0;
    const eighth=60/105/2;
    function percussion(time,step){
@@ -44,11 +41,11 @@ function playSong(name){
    function schedule(){
      if(songSession!==session)return;
      const now=context.currentTime;
-     if(name==="bella"){
-       let time=start+cue/100+percussionStep*eighth;
+     if(name==="flamenco"){
+       let time=start+percussionStep*eighth;
        while(time<=now+.16&&time<start+score.duration/100){
          if(time>=now-.05)percussion(Math.max(now,time),percussionStep);
-         percussionStep++;time=start+cue/100+percussionStep*eighth;
+         percussionStep++;time=start+percussionStep*eighth;
        }
      }
      while(index<score.notes.length){
@@ -62,7 +59,7 @@ function playSong(name){
        const duration=length/100+.04;
        const level=.07*strength/100;
        tone(frequency,duration,level,"triangle",delay,bus);
-       if(name==="bella"){
+       if(name==="flamenco"){
          tone(frequency*2,Math.min(.11,duration),level*.28,"sine",delay,bus);
          if(pitch<=52)tone(frequency,Math.min(duration,.48),level*.85,"sine",delay,bus);
        }

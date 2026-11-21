@@ -66,7 +66,7 @@ function paint(){
      bachActive=atPiano;guitarActive=atGuitar;music();
 
    }
-   notifyWorld(item ? (item[0]==="piano"?(room==="memory6"?"♪ Oblivion · M83 feat. Susanne Sundfør":"♪ G Minor Bach · Piano Tiles 2"):item[0]==="guitar"?"Bella · GIMS · Amen also plays guitar":(item[5]||item[0])+" nearby")+" · Press E to inspect" : "");
+   notifyWorld(item ? (item[0]==="piano"?(room==="memory6"?"♪ Oblivion · M83 feat. Susanne Sundfør":"♪ G Minor Bach · Piano Tiles 2"):item[0]==="guitar"?"Flamenco tangos · Amen also plays guitar":(item[5]||item[0])+" nearby")+" · Press E to inspect" : "");
  }
  button.hidden=!started||!item;
  button.disabled=!item;

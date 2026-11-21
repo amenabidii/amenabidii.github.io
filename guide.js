@@ -214,12 +214,12 @@ async function localizedReply(text,topicId) {
   const missing=()=>{offerReferral=true;return opener+escalate[col+1];};
   if(topicId===undefined && /salary|budget|how much|combien coûte|salaire|prix|قداش يكلّف|مرتب|بكام|تكلفة|funding|revenue|daily users|personal phone/i.test(text)) return missing();
   if(topicId===undefined && /recipe|weather|politics|stock price|طقس|ماتش|météo|recette/i.test(text)) return ["I cover Amen’s portfolio. Try a project, his studies or his music.","Je réponds sur le parcours d’Amen. Demande-moi un projet ou ses études.","Nahki 3la parcours mta3 Amen. Es2elni 3al 9raya walla projet.","نحكي على مسيرة آمن. اسألني على القراية وإلا مشروع.","أنا هنا عشان أحكي عن آمن. اسألني عن دراسته أو مشاريعه."][col+1];
-  if(/dhiya|ranya|kasserine|p\.?a\.?r\.? team|فريق القصرين/i.test(text))return opener+[
-    "Amen was one of 12 young P.A.R. researchers in Kasserine. Dhiya and Ranya were teammates. The research involved more than 240 young people, and Amen co-led a climate petition that gathered over 400 signatures.",
-    "À Kasserine, Amen faisait partie de douze jeunes chercheurs avec Dhiya et Ranya. Plus de 240 jeunes ont contribué à la recherche.",
-    "Fel Gasrine kenou 12 chercheurs chbeb, fihom Amen, Dhiya w Ranya. Akther men 240 chab cherkou fel recherche.",
-    "في القصرين كانوا 12 باحث وباحثة شبان، منهم آمن وضياء ورانيا. أكثر من 240 شاب شاركوا في البحث.",
-    "في القصرين كانوا 12 باحث وباحثة شُبّان، منهم آمن وضياء ورانيا، وشارك في البحث أكتر من 240 شاب."
+  if(/kasserine|p\.?a\.?r\.? team|فريق القصرين/i.test(text))return opener+[
+    "Amen was one of 12 young P.A.R. researchers in Kasserine. The research involved more than 240 young people, and Amen co-led a climate petition that gathered over 400 signatures.",
+    "À Kasserine, Amen faisait partie de douze jeunes chercheurs. Plus de 240 jeunes ont contribué à la recherche.",
+    "Fel Gasrine kenou 12 chercheurs chbeb. Akther men 240 chab cherkou fel recherche.",
+    "في القصرين كانوا 12 باحث وباحثة شبان. أكثر من 240 شاب شاركوا في البحث.",
+    "في القصرين كانوا 12 باحث وباحثة شُبّان، وشارك في البحث أكتر من 240 شاب."
   ][col+1];
   const story=activityStories.find(entry=>entry.match.test(text));
   if(story && col<0) return "From Amen’s post, in first-person summary: "+story.text;

@@ -143,3 +143,7 @@ header nav{gap:clamp(.45rem,1.7vw,1.5rem)}.org{display:flex;gap:.5rem;align-item
 #par-plan .event-photos figure{display:flex;align-items:center;gap:.65rem;aspect-ratio:16/10;background:#10212b;padding:.45rem}
 #par-plan .event-photos img{width:auto;max-width:66%;height:100%;min-width:0;object-fit:contain}
 #par-plan .event-photos figcaption{flex:1;line-height:1.35}
+header{position:sticky;top:0;z-index:12;background:#0a131c;transition:transform .18s}
+header.header-away:not(:focus-within){transform:translateY(-105%)}
+section,details{scroll-margin-top:7rem}
+.speed-setting{display:flex;align-items:center;gap:.7rem;color:#bae7dd;font:14px monospace;margin:.65rem 0}.speed-setting input{accent-color:#67ead4;max-width:46%}

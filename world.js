@@ -154,7 +154,8 @@ function walk(now){
  const length=Math.hypot(dx,dy);
  if(length){
    const ox=x,oy=y;
-   advance(dx/length*116*dt,dy/length*116*dt);
+   const step=Number(document.querySelector("#player-speed").value)*dt;
+   advance(dx/length*step,dy/length*step);
    moveTeam(ox,oy);
    if(held.size||stick)stride+=Math.hypot(x-ox,y-oy);
    paint();

@@ -154,3 +154,9 @@ section,details{scroll-margin-top:7rem}
 @media(prefers-reduced-motion:reduce){#mission-party div{animation:none}}
 #world-toast{border-left:3px solid #78e5dc}#memory-choice strong{color:#ffd993}
 #world-toast[data-kind=reward]{color:#ffe89b;border-color:#e5b453}#world-toast[data-kind=story]{color:#f0d9ff;border-color:#c79bf1}
+
+.release-notice {position:fixed;z-index:10;bottom:1rem;left:1rem;width:min(23rem,calc(100vw - 6rem));box-sizing:border-box;padding:.8rem 2.25rem .8rem 1rem;border:1px solid #365967;border-left:3px solid #65e4d6;border-radius:.55rem;background:#10202b;color:#deedf5;box-shadow:0 .4rem 1.5rem #0005;font-size:.86rem;line-height:1.45}
+.release-notice strong,.release-notice span {display:block}
+.release-notice strong {color:#85eddf}
+.release-notice button {position:absolute;right:.3rem;top:.2rem;background:transparent;color:inherit;border:0;font-size:1.25rem;cursor:pointer}
+@media(max-width:620px){.release-notice{bottom:4.6rem}}

@@ -12,7 +12,10 @@ const amenosChat = (() => {
     const user={role:"user",content:text.slice(0,400)};
     const response=await fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({messages:[...history,user],language}),signal:AbortSignal.timeout(30000)});
-    if(!response.ok) throw Error("AI unavailable");
+    if (!response.ok) {
+      const detail = await response.json().catch(() => ({}));
+      throw Object.assign(new Error("AI unavailable"), {code: detail.code});
+    }
     const reader=response.body.pipeThrough(new TextDecoderStream()).getReader();
     const marker="[[ASK_AMEN]]";
     let buffer="",result="",complete=false;

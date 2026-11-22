@@ -45,6 +45,11 @@ export default {
       return new Response(events.map(event => "data: " + JSON.stringify(event) + "\n\n").join(""), {
         headers: {...headers, "Content-Type": "text/event-stream"}
       });
-    } catch { return error(503,"AI unavailable"); }
+    } catch (cause) {
+      if (/neurons|daily (?:free )?(?:limit|allocation|quota)/i.test(cause.message || "")) {
+        return Response.json({code:"daily_quota"}, {status:429, headers});
+      }
+      return error(503,"AI unavailable");
+    }
   }
 };

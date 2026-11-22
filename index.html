@@ -75,12 +75,12 @@
 <dialog id="guide" aria-labelledby="guide-title">
   <div class="guide-head">
     <div class="mascot" aria-hidden="true"><img src="little-amen.svg" width="60" height="75" alt=""><span class="keys"></span></div>
-    <div><small>PORTFOLIO GUIDE</small><h3 id="guide-title">Amenos</h3></div>
+    <div><small>POWERED BY CLOUDFLARE WORKERS AI</small><h3 id="guide-title">Amenos</h3></div>
     <button id="close-guide" type="button" aria-label="Close portfolio guide">×</button>
   </div>
   <div id="conversation" role="log" aria-label="Conversation" aria-live="polite"><p>Pull up a chair. Ask me about a project, my fieldwork in Tunisia, or what I play on stage.</p></div>
   <label class="lang-label">Reply language <select id="language"><option value="auto">Detect automatically</option><option value="en">English</option><option value="fr">Français</option><option value="tn">Tounsi · Arabizi</option><option value="ar-TN">تونسي</option><option value="ar-EG">مصري</option></select></label>
-  <form id="ask-form"><label for="question">Ask about Amen’s portfolio</label><div><input id="question" maxlength="240" required autocomplete="off" placeholder="How does FlyQR work?"><button>Send</button></div></form>
+  <form id="ask-form"><label for="question">Ask about Amen’s portfolio</label><div><input id="question" maxlength="240" required autocomplete="off" placeholder="What is Amen working on?"><button>Send</button></div></form>
 <form id="handoff" hidden>
 <h4>Write to Amen</h4><p>Review your message. Clicking Send shares your email and question with FormSubmit for delivery to Amen.</p>
 <label>Your email <input type="email" name="email" required autocomplete="email"></label>
@@ -88,7 +88,7 @@
 <button type="submit">Send to Amen</button><p id="send-status" role="status"></p> <button type="button" id="discard">Cancel</button>
 <span>Recipient · amenabidii@aucegypt.edu</span>
 </form></dialog>
-<script defer src="languages.js"></script><script defer src="fieldnotes.js"></script><script src="amenos-client.js" defer></script><script src="guide.js?v=live-amenos" defer></script><dialog id="inquiry" aria-labelledby="inquiry-title">
+<script defer src="release.js"></script><script defer src="languages.js"></script><script defer src="fieldnotes.js"></script><script src="amenos-client.js?v=quota" defer></script><script src="guide.js?v=quota" defer></script><dialog id="inquiry" aria-labelledby="inquiry-title">
 <div class="inquiry-head"><h3 id="inquiry-title"></h3><button type="button" class="dismiss" aria-label="Close inquiry">×</button></div><div class="inquiry-scroll"><div id="funding"></div>
 <form id="inquiry-form"><label>Your name<input name="sender" autocomplete="name" maxlength="100" required></label>
 <label>Your email<input type="email" name="email" autocomplete="email" required></label>

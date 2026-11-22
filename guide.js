@@ -79,7 +79,7 @@ async function ask(text, topicId) {
         await ready;
         if(bubble.isConnected && guide.classList.contains("thinking"))bubble.textContent=partial;
       });
-    } catch { unavailable=true; }
+    } catch (error) { unavailable=true; if(error.code === 'daily_quota') suggestQuestions(); }
     await ready;
     if(live){
       bubble.textContent=live.content;
@@ -101,7 +101,6 @@ const launcher = document.querySelector("#ask-amen");
 launcher.onclick = () => {
   if (guide.open) return guide.close();
   guide.show();
-  suggestQuestions();
   warmSearch();
   launcher.setAttribute("aria-expanded", "true");
   question.focus({preventScroll:true});
@@ -117,7 +116,7 @@ form.onsubmit = event => {
 };
 function suggestQuestions() {
   if (conversation.querySelector(".chat-choices")) return;
-  const intro=message("Want a starting point? Pick a question or write your own.", "answer");
+  const intro=message("Today’s AI allowance is used up. I can still answer from Amen’s portfolio notes.", "answer");
   const choices=document.createElement("span");
   choices.className="chat-choices";
   for(const title of ["Projects", "Education", "Technical skills", "Community activities"]) {

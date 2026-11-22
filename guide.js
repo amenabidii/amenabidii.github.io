@@ -68,9 +68,26 @@ async function ask(text, topicId) {
   const bubble = message("Amenos is typing…", "answer");
   guide.classList.add("thinking");
   try {
-    const [answer] = await Promise.all([localizedReply(text,topicId),new Promise(done => setTimeout(done,1250))]);
-    bubble.dir="auto";
-    bubble.textContent = answer;
+    const choice=document.querySelector("#language").value;
+    conversationLocale=detectLanguage(text);
+    offerReferral=false;
+    const ready=new Promise(done=>setTimeout(done,650));
+    let live, unavailable=false;
+    const section=topicId===undefined ? "" : " (portfolio topic: "+(topicQuestions[topicId] || "research interests")+")";
+    try {
+      live=await amenosChat.answer(text+section,choice,async partial=>{
+        await ready;
+        if(bubble.isConnected && guide.classList.contains("thinking"))bubble.textContent=partial;
+      });
+    } catch { unavailable=true; }
+    await ready;
+    if(live){
+      bubble.textContent=live.content;
+      offerReferral=live.referral;
+    }else{
+      bubble.textContent=await localizedReply(text,topicId);
+      if(unavailable)bubble.title="Live AI is unavailable. This answer uses the portfolio’s saved notes.";
+    }
     if (offerReferral) appendDraftButton(bubble,text);
   } catch {
     bubble.textContent = "My search is unavailable. Try an email, project or activity suggestion.";

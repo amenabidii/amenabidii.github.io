@@ -1,0 +1,45 @@
+name: Activate Amenos
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: activate-amenos
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Deploy Worker and install private API key
+        working-directory: amenos-backend
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          set -eu
+          : "${OPENAI_API_KEY:?Missing repository secret OPENAI_API_KEY}"
+          : "${CLOUDFLARE_API_TOKEN:?Missing repository secret CLOUDFLARE_API_TOKEN}"
+          : "${CLOUDFLARE_ACCOUNT_ID:?Missing repository variable CLOUDFLARE_ACCOUNT_ID}"
+          npx --yes wrangler@4 deploy
+          printf %s "$OPENAI_API_KEY" | npx --yes wrangler@4 secret put OPENAI_API_KEY
+      - name: Verify the chat endpoint and connect the public widget
+        run: |
+          set -eu
+          account=$(curl -fsS -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain")
+          subdomain=$(jq -er '.result.subdomain | select(test("^[a-z0-9-]+$"))' <<< "$account")
+          endpoint="https://amenos-portfolio.$subdomain.workers.dev/chat"
+          response=$(mktemp)
+          curl --retry 5 --retry-all-errors --retry-delay 5 --max-time 40 -fsS -o "$response" -H 'Origin: https://amenabidii.github.io' -H 'Content-Type: application/json' --data '{"language":"en","messages":[{"role":"user","content":"What does Amen study? Reply in one sentence."}]}' "$endpoint"
+          grep -q '"response.completed"' "$response"
+          jq -n --arg endpoint "$endpoint" '{endpoint:$endpoint}' > amenos-config.json
+          git add amenos-config.json
+          if ! git diff --cached --quiet; then
+            git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -m "Connect portfolio chat to the verified Amenos endpoint"
+            git push origin HEAD:main
+          fi

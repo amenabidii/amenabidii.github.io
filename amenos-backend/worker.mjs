@@ -10,7 +10,7 @@ export default {
     if (request.headers.get("Origin") !== origin) return error(403,"Unknown origin");
     if (request.method === "OPTIONS") return new Response(null,{headers:{...headers,"Access-Control-Allow-Methods":"POST","Access-Control-Allow-Headers":"Content-Type"}});
     if (request.method !== "POST") return error(405,"Use POST");
-    if (!env.OPENAI_API_KEY) return error(503,"AI unavailable");
+    if (!env.AI) return error(503,"AI unavailable");
     if (!request.headers.get("Content-Type")?.startsWith("application/json")) return error(415,"Expected JSON");
     if (!(await env.VISITOR_LIMIT.limit({key:request.headers.get("CF-Connecting-IP") || "unknown"})).success) return error(429,"Please pause before asking again");
     let data;
@@ -30,12 +30,21 @@ export default {
       turns.some((t,i)=>t?.role!==(i%2?"assistant":"user") || typeof t.content!=="string" || !t.content.trim() || t.content.length>(i%2?1600:400))) return error(400,"Invalid conversation");
     if (!(await env.SITE_LIMIT.limit({key:"portfolio"})).success) return error(429,"Chat is busy");
     try {
-      const upstream=await fetch("https://api.openai.com/v1/responses",{
-        method:"POST",headers:{Authorization:"Bearer "+env.OPENAI_API_KEY,"Content-Type":"application/json"},
-        body:JSON.stringify({model:env.OPENAI_MODEL,instructions:instructions+"\nReply language preference: "+data.language,input:turns.map(({role,content})=>({role,content})),max_output_tokens:450,store:false,stream:true}),signal:request.signal
+      const messages = [
+        {role: "system", content: instructions + "\nReply language preference: " + data.language},
+        ...turns.map(({role, content}) => ({role, content}))
+      ];
+      const result = await env.AI.run("@cf/meta/llama-3.1-8b-instruct-fp8-fast", {
+        messages, max_tokens: 450
       });
-      if(!upstream.ok) return error(503,"AI unavailable");
-      return new Response(upstream.body,{headers:{...headers,"Content-Type":"text/event-stream"}});
+      if (!result.response?.trim()) return error(503, "AI unavailable");
+      const events = [
+        {type: "response.output_text.delta", delta: result.response},
+        {type: "response.completed"}
+      ];
+      return new Response(events.map(event => "data: " + JSON.stringify(event) + "\n\n").join(""), {
+        headers: {...headers, "Content-Type": "text/event-stream"}
+      });
     } catch { return error(503,"AI unavailable"); }
   }
 };

@@ -17,13 +17,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Deploy Worker and install private API key
+      - name: Deploy Workers AI backend
         working-directory: amenos-backend
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           set -eu
-          : "${OPENAI_API_KEY:?Missing repository secret OPENAI_API_KEY}"
           : "${CLOUDFLARE_API_TOKEN:?Missing repository secret CLOUDFLARE_API_TOKEN}"
           : "${CLOUDFLARE_ACCOUNT_ID:?Missing repository variable CLOUDFLARE_ACCOUNT_ID}"
           api="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain"
@@ -33,18 +30,6 @@ jobs:
             curl -fsS -X PUT -H "$auth" -H 'Content-Type: application/json' --data '{"subdomain":"amenabidii"}' "$api" | jq -e '.success'
           fi
           npx --yes wrangler@4 deploy
-          printf %s "$OPENAI_API_KEY" | npx --yes wrangler@4 secret put OPENAI_API_KEY
-      - name: Check OpenAI model access
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: |
-          response=$(mktemp)
-          status=$(curl -sS -o "$response" -w '%{http_code}' https://api.openai.com/v1/responses -H "Authorization: Bearer $OPENAI_API_KEY" -H 'Content-Type: application/json' --data '{"model":"gpt-4.1-mini","input":"Reply OK.","max_output_tokens":16,"store":false}')
-          if [ "$status" != 200 ]; then
-            echo "OpenAI returned HTTP $status"
-            jq '.error | {type,code}' "$response"
-            exit 1
-          fi
       - name: Verify the chat endpoint and connect the public widget
         run: |
           set -eu

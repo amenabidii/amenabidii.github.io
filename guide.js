@@ -85,7 +85,8 @@ async function ask(text, topicId) {
       bubble.textContent=live.content;
       offerReferral=live.referral;
     }else{
-      bubble.textContent=await localizedReply(text,topicId);
+      const {greetingReply} = await import("./amenos-backend/greetings.mjs");
+      bubble.textContent=greetingReply(text,choice) || await localizedReply(text,topicId);
       if(unavailable)bubble.title="Live AI is unavailable. This answer uses the portfolio’s saved notes.";
     }
     if (offerReferral) appendDraftButton(bubble,text);

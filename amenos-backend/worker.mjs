@@ -1,5 +1,8 @@
 import { instructions } from "./instructions.mjs";
 
+import { greetingReply } from "./greetings.mjs";
+import { portfolioNotes } from "./portfolio-notes.mjs";
+
 const origin = "https://amenabidii.github.io";
 const languages = new Set(["auto","en","fr","tn","ar-TN","ar-EG"]);
 export default {
@@ -30,16 +33,20 @@ export default {
       turns.some((t,i)=>t?.role!==(i%2?"assistant":"user") || typeof t.content!=="string" || !t.content.trim() || t.content.length>(i%2?1600:400))) return error(400,"Invalid conversation");
     if (!(await env.SITE_LIMIT.limit({key:"portfolio"})).success) return error(429,"Chat is busy");
     try {
-      const messages = [
-        {role: "system", content: instructions + "\nReply language preference: " + data.language},
-        ...turns.map(({role, content}) => ({role, content}))
-      ];
-      const result = await env.AI.run("@cf/meta/llama-3.1-8b-instruct-fp8-fast", {
-        messages, max_tokens: 450
-      });
-      if (!result.response?.trim()) return error(503, "AI unavailable");
+      let answer = greetingReply(turns.at(-1).content, data.language);
+      if (!answer) {
+        const messages = [
+          {role: "system", content: instructions + "\nAdditional published portfolio entries (first-person statements are Amen’s):\n" + portfolioNotes.join("\n") + "\nReply language preference: " + data.language},
+          ...turns.map(({role, content}) => ({role, content}))
+        ];
+        const result = await env.AI.run("@cf/meta/llama-3.1-8b-instruct-fp8-fast", {
+          messages, max_tokens: 450, temperature: 0.2
+        });
+        answer = result.response;
+      }
+      if (!answer?.trim()) return error(503, "AI unavailable");
       const events = [
-        {type: "response.output_text.delta", delta: result.response},
+        {type: "response.output_text.delta", delta: answer},
         {type: "response.completed"}
       ];
       return new Response(events.map(event => "data: " + JSON.stringify(event) + "\n\n").join(""), {

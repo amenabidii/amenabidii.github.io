@@ -26,6 +26,12 @@ jobs:
           : "${OPENAI_API_KEY:?Missing repository secret OPENAI_API_KEY}"
           : "${CLOUDFLARE_API_TOKEN:?Missing repository secret CLOUDFLARE_API_TOKEN}"
           : "${CLOUDFLARE_ACCOUNT_ID:?Missing repository variable CLOUDFLARE_ACCOUNT_ID}"
+          api="https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain"
+          auth="Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+          result=$(curl -sS -H "$auth" "$api")
+          if jq -e 'any(.errors[]?; .code == 10007 or (.message | test("subdomain.*(not|never)|no .*subdomain"; "i"))) or (.success and (.result.subdomain == null))' <<< "$result" >/dev/null; then
+            curl -fsS -X PUT -H "$auth" -H 'Content-Type: application/json' --data '{"subdomain":"amenabidii"}' "$api" | jq -e '.success'
+          fi
           npx --yes wrangler@4 deploy
           printf %s "$OPENAI_API_KEY" | npx --yes wrangler@4 secret put OPENAI_API_KEY
       - name: Verify the chat endpoint and connect the public widget
